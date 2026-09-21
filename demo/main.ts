@@ -1,6 +1,6 @@
 import * as Blockly from 'blockly';
 import { javascriptGenerator } from 'blockly/javascript';
-import { installJevBlocks, jevFromAlmond, jevFromProxy, jevLessons, jevToolboxCategory } from '../src/index';
+import { installJevBlocks, jevFromAlmond, jevFromProxy, jevLessons, jevToolboxCategory, runJevProgram } from '../src/index';
 
 installJevBlocks();
 
@@ -78,21 +78,19 @@ loadLesson(initial || jevLessons[0].id);
 (window as any).workspace = workspace; // handy in DevTools
 (window as any).loadLesson = loadLesson;
 lessonSelect.addEventListener('change', () => loadLesson(lessonSelect.value));
+window.addEventListener('hashchange', () => {
+  const id = location.hash.slice(1);
+  if (id && id !== lessonSelect.value) loadLesson(id);
+});
 document.getElementById('reset')!.addEventListener('click', () => loadLesson(lessonSelect.value));
 
-const onAlmond = import.meta.env.VITE_JEV_RUNTIME === 'almond';
-const jev = onAlmond ? jevFromAlmond() : jevFromProxy();
-document.getElementById('runtime')!.textContent = onAlmond
-  ? 'Runs on Almond: the TypeSafe key stays in Almond protected calls (quota-limited demo).'
-  : 'Runs through the local Node proxy on :8787.';
-const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+const jev = import.meta.env.VITE_JEV_RUNTIME === 'almond' ? jevFromAlmond() : jevFromProxy();
 
 document.getElementById('run')!.addEventListener('click', async () => {
   outEl.textContent = '';
   const print = (v: unknown) => { outEl.textContent += String(v) + '\n'; };
   try {
-    const fn = new AsyncFunction('jev', 'print', javascriptGenerator.workspaceToCode(workspace));
-    await fn(jev, print);
+    await runJevProgram(javascriptGenerator.workspaceToCode(workspace), { jev, print });
     print('— done —');
   } catch (err) {
     print('Error: ' + (err instanceof Error ? err.message : String(err)));

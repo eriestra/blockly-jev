@@ -12,6 +12,7 @@ export type { JevSwitchState } from './blocks/jev_switch';
 export { JEV_NOUL_TYPE, JEV_PROBABILITY_TYPE, JEV_CHOICE_TYPE, JEV_SCORE_TYPE } from './blocks/reporters';
 export { installJavascript } from './generators/javascript';
 export * from './runtime/index';
+export { runJevProgram } from './runtime/run';
 export { jevLessons } from './lessons';
 export type { JevLesson } from './lessons';
 export { jevFromAlmond, ALMOND_MAX_CHOICE_OPTIONS, ALMOND_MAX_SCORE_LEVELS } from './runtime/almond';
