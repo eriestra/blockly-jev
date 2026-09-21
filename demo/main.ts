@@ -1,6 +1,14 @@
 import * as Blockly from 'blockly';
 import { javascriptGenerator } from 'blockly/javascript';
-import { installJevBlocks, jevFromAlmond, jevFromProxy, jevLessons, jevToolboxCategory, runJevProgram } from '../src/index';
+import {
+  almondTheme,
+  installJevBlocks,
+  jevFromAlmond,
+  jevFromProxy,
+  jevLessons,
+  jevToolboxCategory,
+  runJevProgram,
+} from '../src/index';
 
 installJevBlocks();
 
@@ -30,7 +38,15 @@ const toolbox = {
   ],
 };
 
-const workspace = Blockly.inject('blockly', { toolbox, trashcan: true, zoom: { controls: true } });
+const workspace = Blockly.inject('blockly', {
+  toolbox,
+  theme: almondTheme,
+  renderer: 'zelos',
+  trashcan: true,
+  zoom: { controls: true, wheel: false, startScale: 0.85 },
+  grid: { spacing: 24, length: 2, colour: '#e6e0d5', snap: false },
+  move: { scrollbars: true, drag: true, wheel: true },
+});
 
 // Print into the output panel instead of window.alert.
 javascriptGenerator.forBlock['text_print'] = function (block, gen) {
@@ -38,37 +54,131 @@ javascriptGenerator.forBlock['text_print'] = function (block, gen) {
   return `print(${msg});\n`;
 };
 
-const codeEl = document.getElementById('code')!;
-const outEl = document.getElementById('output')!;
+const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+const codeEl = $('code');
+const outEl = $('output');
+const statusEl = $('status');
+const railEl = $('rail');
+const lessonText = $('lesson-text');
+const eyebrowEl = $('lesson-eyebrow');
+const callsEl = $('calls');
+const runBtn = $<HTMLButtonElement>('run');
 
 function regenerate() {
   codeEl.textContent = javascriptGenerator.workspaceToCode(workspace);
 }
 workspace.addChangeListener((e) => { if (!e.isUiEvent) regenerate(); });
 
-const lessonSelect = document.getElementById('lesson') as HTMLSelectElement;
-const lessonText = document.getElementById('lesson-text')!;
+// ---- progress (which lessons were run successfully) ----
+const DONE_KEY = 'jev-done';
+function loadDone(): Set<string> {
+  try { return new Set(JSON.parse(localStorage.getItem(DONE_KEY) ?? '[]')); } catch { return new Set(); }
+}
+const done = loadDone();
+function saveDone() { try { localStorage.setItem(DONE_KEY, JSON.stringify([...done])); } catch {} }
+
+// ---- lesson rail ----
+let currentId = jevLessons[0].id;
+const shortTitle = (t: string) => t.replace(/^\d+\.\s*/, '');
+
 for (const lesson of jevLessons) {
-  const opt = document.createElement('option');
-  opt.value = lesson.id;
-  opt.textContent = lesson.title;
-  lessonSelect.appendChild(opt);
+  const b = document.createElement('button');
+  b.className = 'step';
+  b.dataset.id = lesson.id;
+  b.type = 'button';
+  b.title = lesson.title;
+  b.innerHTML = `<span class="dot"></span><span class="label">${shortTitle(lesson.title)}</span>`;
+  b.addEventListener('click', () => loadLesson(lesson.id));
+  railEl.appendChild(b);
+}
+
+function paintRail() {
+  const steps = railEl.querySelectorAll<HTMLButtonElement>('.step');
+  steps.forEach((step, i) => {
+    const id = step.dataset.id!;
+    const isDone = done.has(id);
+    step.classList.toggle('active', id === currentId);
+    step.classList.toggle('done', isDone && id !== currentId);
+    const dot = step.querySelector('.dot')!;
+    dot.textContent = isDone && id !== currentId ? '✓' : String(i + 1);
+    step.setAttribute('aria-current', id === currentId ? 'step' : 'false');
+  });
+  const idx = jevLessons.findIndex((l) => l.id === currentId);
+  $<HTMLButtonElement>('prev').disabled = idx <= 0;
+  $<HTMLButtonElement>('next').disabled = idx >= jevLessons.length - 1;
+}
+
+function setOutput(lines: string[], state: 'idle' | 'running' | 'done' | 'error') {
+  outEl.innerHTML = '';
+  for (const line of lines) {
+    const d = document.createElement('div');
+    d.className = 'line';
+    d.textContent = line;
+    outEl.appendChild(d);
+  }
+  if (state === 'idle') {
+    const d = document.createElement('div'); d.className = 'line idle'; d.textContent = 'Press Run to see what the blocks print.'; outEl.appendChild(d);
+  }
+  statusEl.hidden = state === 'idle' || state === 'running';
+  statusEl.className = 'pill ' + (state === 'error' ? '' : 'green');
+  statusEl.textContent = state === 'done' ? 'Done' : state === 'error' ? 'Error' : '';
+}
+
+function el(tag: string, className: string, text: string) {
+  const e = document.createElement(tag);
+  if (className) e.className = className;
+  e.textContent = text;
+  return e;
+}
+
+function loadWorkspace(ws: Record<string, unknown>, callsLabel: string) {
+  Blockly.serialization.workspaces.load(ws as any, workspace);
+  workspace.scrollCenter();
+  callsEl.textContent = callsLabel;
+  setOutput([], 'idle');
+  regenerate();
 }
 
 function loadLesson(id: string) {
   const lesson = jevLessons.find((l) => l.id === id) ?? jevLessons[0];
-  lessonSelect.value = lesson.id;
-  Blockly.serialization.workspaces.load(lesson.workspace as any, workspace);
+  currentId = lesson.id;
+  const n = jevLessons.indexOf(lesson) + 1;
+  loadWorkspace(lesson.workspace, `${lesson.calls} Jev call${lesson.calls === 1 ? '' : 's'} per run`);
+  eyebrowEl.textContent = `Lesson ${n} of ${jevLessons.length}`;
   lessonText.innerHTML = '';
-  const h = document.createElement('h3'); h.textContent = lesson.title;
-  const p1 = document.createElement('p'); p1.textContent = lesson.concept;
-  const p2 = document.createElement('p'); p2.innerHTML = '<b>Jev:</b> '; p2.append(lesson.jev);
-  const p3 = document.createElement('p'); p3.innerHTML = '<b>Try it:</b> '; p3.append(lesson.tryIt);
-  const p4 = document.createElement('p'); p4.style.color = '#6b6864'; p4.textContent = `One run makes ${lesson.calls} Jev call${lesson.calls === 1 ? '' : 's'}.`;
-  lessonText.append(h, p1, p2, p3, p4);
-  outEl.textContent = '';
+  const h = document.createElement('h3'); h.textContent = shortTitle(lesson.title);
+  const lead = el('p', 'lead', lesson.concept);
+  const theory = lesson.theory.map((t) => el('p', '', t));
+  const jevP = document.createElement('p'); jevP.innerHTML = '<span class="tag jev">Jev</span>'; jevP.append(lesson.jev);
+
+  // Challenge with progressive hints and a loadable solution.
+  const ch = document.createElement('section'); ch.className = 'challenge';
+  const chHead = document.createElement('p'); chHead.innerHTML = '<span class="tag try">Challenge</span>'; chHead.append(lesson.challenge.text);
+  const hintList = document.createElement('ol'); hintList.className = 'hints';
+  const actions = document.createElement('div'); actions.className = 'actions';
+  const hintBtn = document.createElement('button'); hintBtn.className = 'btn small'; hintBtn.type = 'button';
+  let shown = 0;
+  const paintHint = () => { hintBtn.textContent = shown < lesson.challenge.hints.length ? `Hint ${shown + 1} of ${lesson.challenge.hints.length}` : 'No more hints'; hintBtn.disabled = shown >= lesson.challenge.hints.length; };
+  hintBtn.addEventListener('click', () => {
+    if (shown >= lesson.challenge.hints.length) return;
+    hintList.appendChild(el('li', '', lesson.challenge.hints[shown++]));
+    paintHint();
+  });
+  paintHint();
+  const solBtn = document.createElement('button'); solBtn.className = 'btn small'; solBtn.type = 'button'; solBtn.textContent = 'Show solution';
+  solBtn.addEventListener('click', () => {
+    loadWorkspace(lesson.challenge.solution, `${lesson.challenge.calls} Jev call${lesson.challenge.calls === 1 ? '' : 's'} per run`);
+    eyebrowEl.textContent = `Lesson ${n} of ${jevLessons.length} · solution`;
+    solBtn.textContent = 'Solution loaded';
+    solBtn.disabled = true;
+  });
+  actions.append(hintBtn, solBtn);
+  ch.append(chHead, hintList, actions);
+
+  lessonText.append(h, lead, ...theory, jevP, ch);
   try { localStorage.setItem('jev-lesson', lesson.id); } catch {}
-  history.replaceState(null, '', `#${lesson.id}`);
+  if (location.hash.slice(1) !== lesson.id) history.replaceState(null, '', `#${lesson.id}`);
+  paintRail();
   regenerate();
 }
 
@@ -77,22 +187,35 @@ if (!initial) { try { initial = localStorage.getItem('jev-lesson') ?? ''; } catc
 loadLesson(initial || jevLessons[0].id);
 (window as any).workspace = workspace; // handy in DevTools
 (window as any).loadLesson = loadLesson;
-lessonSelect.addEventListener('change', () => loadLesson(lessonSelect.value));
+
+$('reset').addEventListener('click', () => loadLesson(currentId));
+$('prev').addEventListener('click', () => { const i = jevLessons.findIndex((l) => l.id === currentId); if (i > 0) loadLesson(jevLessons[i - 1].id); });
+$('next').addEventListener('click', () => { const i = jevLessons.findIndex((l) => l.id === currentId); if (i < jevLessons.length - 1) loadLesson(jevLessons[i + 1].id); });
 window.addEventListener('hashchange', () => {
   const id = location.hash.slice(1);
-  if (id && id !== lessonSelect.value) loadLesson(id);
+  if (id && id !== currentId) loadLesson(id);
 });
-document.getElementById('reset')!.addEventListener('click', () => loadLesson(lessonSelect.value));
 
+// ---- run ----
 const jev = import.meta.env.VITE_JEV_RUNTIME === 'almond' ? jevFromAlmond() : jevFromProxy();
 
-document.getElementById('run')!.addEventListener('click', async () => {
-  outEl.textContent = '';
-  const print = (v: unknown) => { outEl.textContent += String(v) + '\n'; };
+runBtn.addEventListener('click', async () => {
+  const lines: string[] = [];
+  setOutput(lines, 'running');
+  runBtn.disabled = true;
+  runBtn.textContent = 'Running…';
+  const print = (v: unknown) => { lines.push(String(v)); setOutput(lines, 'running'); };
   try {
     await runJevProgram(javascriptGenerator.workspaceToCode(workspace), { jev, print });
-    print('— done —');
+    setOutput(lines, 'done');
+    done.add(currentId);
+    saveDone();
+    paintRail();
   } catch (err) {
-    print('Error: ' + (err instanceof Error ? err.message : String(err)));
+    lines.push('Error: ' + (err instanceof Error ? err.message : String(err)));
+    setOutput(lines, 'error');
+  } finally {
+    runBtn.disabled = false;
+    runBtn.textContent = 'Run';
   }
 });

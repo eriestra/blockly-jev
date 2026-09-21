@@ -1,6 +1,7 @@
 import * as Blockly from 'blockly/core';
 
-export const JEV_COLOUR = 290;
+/** Almond violet; blocks accept a hex colour anywhere a hue is accepted. */
+export const JEV_COLOUR = '#7557c7';
 
 /**
  * Extension shared by Noul-based blocks: a "describe yes and no" checkbox

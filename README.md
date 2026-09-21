@@ -88,23 +88,25 @@ server or in Node, use `jevFromClient(new TypeSafeClient())` directly.
 
 ## Learn to code with Jev: ten lessons
 
-`jevLessons` (also `blockly-jev/lessons`) is a curriculum of ten workspaces
-with teacher text, each introducing one programming idea and using Jev in it.
-The hosted demo has a lesson picker; the URL hash selects a lesson, for example
-`https://sites.almond.build/blockly-jev/#functions`.
+`jevLessons` (also `blockly-jev/lessons`) is a curriculum of ten lessons, each
+introducing one programming idea and using Jev in it. A lesson has a worked
+example workspace, short theory paragraphs, a note on Jev's part, and a
+challenge with progressive hints and a solution workspace. The hosted demo has a
+lesson rail that remembers which lessons you have run; the URL hash selects a
+lesson, for example `https://sites.almond.build/blockly-jev/#functions`.
 
-| # | Lesson | Idea | Jev's part | Calls per run |
+| # | Lesson | Idea | Jev's part | Challenge |
 | --- | --- | --- | --- | --- |
-| 1 | Hello, world | sequence, output, values | a true/false value from a yes/no question | 1 |
-| 2 | Variables | naming and reusing values | a probability as a number | 1 |
-| 3 | If and else | branching | Noul as the condition, threshold | 1 |
-| 4 | Numbers and comparisons | numbers, `<` `=` `>` | Score on a described scale | 1 |
-| 5 | Choosing between many options | switch, default case | Choice with described options, confidence gate | 1 |
-| 6 | Lists and loops | collections, for-each | one judgment per item | 3 |
-| 7 | Counting with a loop | accumulator | Noul inside the loop | 3 |
-| 8 | Combining conditions | and, or, not | two independent judgments combined | 2 |
-| 9 | Functions | parameters, reuse | a judgment wrapped as a function | 2 |
-| 10 | A small assistant | everything together | category plus urgency per message, rules in code | 6 |
+| 1 | Hello, world | sequence, output, values | a true/false value from a yes/no question | greet in another language, two Nouls about it |
+| 2 | Variables | naming and reusing values | a probability as a number | happy and worried probabilities of one message |
+| 3 | If and else | branching | Noul as the condition, threshold | complaint router with a 0.7 threshold |
+| 4 | Numbers and comparisons | numbers, `<` `=` `>` | Score on a described scale | urgency score, "Handle today" above 1 |
+| 5 | Choosing between many options | switch, default case | Choice with described options, confidence gate | language router with an otherwise branch |
+| 6 | Lists and loops | collections, for-each | one judgment per item | question or not, per message |
+| 7 | Counting with a loop | accumulator | Noul inside the loop | count the questions |
+| 8 | Combining conditions | and, or, not | independent judgments combined | (urgent or angry) and not spam |
+| 9 | Functions | parameters, reuse | a judgment wrapped as a function | an "is urgent" function called twice |
+| 10 | A small assistant | everything together | category plus urgency per message, rules in code | a second, stricter counter |
 
 Blockly's stock function blocks generate plain functions; the package makes
 them `async` and awaits calls, so Jev reporters work inside functions.

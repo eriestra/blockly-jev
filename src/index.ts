@@ -13,6 +13,7 @@ export { JEV_NOUL_TYPE, JEV_PROBABILITY_TYPE, JEV_CHOICE_TYPE, JEV_SCORE_TYPE } 
 export { installJavascript } from './generators/javascript';
 export * from './runtime/index';
 export { runJevProgram } from './runtime/run';
+export { almondTheme, almondPalette } from './theme';
 export { jevLessons } from './lessons';
 export type { JevLesson } from './lessons';
 export { jevFromAlmond, ALMOND_MAX_CHOICE_OPTIONS, ALMOND_MAX_SCORE_LEVELS } from './runtime/almond';
@@ -24,7 +25,7 @@ const textShadow = { STATE: { shadow: { type: 'text', fields: { TEXT: '' } } } }
 export const jevToolboxCategory = {
   kind: 'category',
   name: 'Jev',
-  colour: '290',
+  colour: '#7557c7',
   contents: [
     { kind: 'label', text: 'Reporters: use anywhere a value goes' },
     { kind: 'block', type: 'jev_noul', inputs: textShadow },
