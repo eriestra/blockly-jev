@@ -11,12 +11,12 @@ blocks give the common shapes a shortcut.
 
 | Block | Kind | Jev primitive | Output | Plugs into |
 | --- | --- | --- | --- | --- |
-| `jev_noul` | reporter | [Noul](https://docs.typesafe.ai/primitives/noul) | Boolean (probability ≥ threshold) | if, while, and/or/not, ternary, list filters |
-| `jev_probability` | reporter | Noul | Number 0–1 | math, compare, sort keys, weighted scoring |
-| `jev_choice` | reporter | [Choice](https://docs.typesafe.ai/primitives/choice) | String (picked option) | text compare, variables, list index |
-| `jev_score` | reporter | [Score](https://docs.typesafe.ai/primitives/score) | Number (expected level) | math, compare, sort, thresholds |
-| `jev_if` | statement | Noul | runs then/else | anywhere a statement goes |
-| `jev_switch` | statement | Choice | runs the matching case, or otherwise | anywhere a statement goes |
+| `jev_noul` "Noul … about …" | reporter | [Noul](https://docs.typesafe.ai/primitives/noul) | Boolean (probability ≥ threshold) | if, while, and/or/not, ternary, list filters |
+| `jev_probability` "Noul probability … about …" | reporter | Noul | Number 0–1 | math, compare, sort keys, weighted scoring |
+| `jev_choice` "Choice … about …" | reporter | [Choice](https://docs.typesafe.ai/primitives/choice) | String (picked option) | text compare, variables, list index |
+| `jev_score` "Score … about …" | reporter | [Score](https://docs.typesafe.ai/primitives/score) | Number (expected level) | math, compare, sort, thresholds |
+| `jev_if` "if Noul … about …" | statement | Noul | runs then/else | anywhere a statement goes |
+| `jev_switch` "switch Choice … about …" | statement | Choice | runs the matching case, or otherwise | anywhere a statement goes |
 
 Reporter blocks with a variable number of rows (`jev_choice` options,
 `jev_score` levels) grow with +/− buttons on the block. `jev_switch` uses the

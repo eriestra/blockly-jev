@@ -122,7 +122,7 @@ export const jevLessons: JevLesson[] = [
     title: '1. Hello, world',
     concept:
       'A program is a list of instructions the computer follows top to bottom. "print" shows a value. Values can be text, numbers, or true/false.',
-    jev: 'The second print shows a value that comes from Jev: true or false, for a yes/no question about some text. That is all AI is here: another value your program can use.',
+    jev: 'A Noul is a yes/no judgment. The second print shows its value, true or false, for a question about some text. That is all AI is here: another value your program can use.',
     tryIt: 'Change the question to "Is this text about food?" and run again.',
     calls: 1,
     workspace: ws(
@@ -137,7 +137,7 @@ export const jevLessons: JevLesson[] = [
     title: '2. Variables',
     concept:
       'A variable is a name for a value, so you can write the value once and use it many times. "set message to" stores it; "message" reads it back.',
-    jev: '"how sure Jev is" returns a number between 0 and 1: the probability that the answer is yes. Numbers like this can be stored, compared, and printed like any other.',
+    jev: '"Noul probability" returns a number between 0 and 1: the probability that the answer is yes. Numbers like this can be stored, compared, and printed like any other.',
     tryIt: 'Change the message to something sad and watch the number drop.',
     calls: 1,
     workspace: ws(
@@ -153,7 +153,7 @@ export const jevLessons: JevLesson[] = [
     title: '3. If and else',
     concept:
       'Programs make decisions. "if ... then ... else" runs one branch when a condition is true and the other when it is false.',
-    jev: 'The condition is a Jev yes/no judgment. "at least 0.5 sure" is the threshold: yes wins when the probability is 0.5 or more.',
+    jev: 'The condition is a Noul. "yes if ≥ 0.5" is the threshold: yes wins when the probability is 0.5 or more.',
     tryIt: 'Set the threshold to 0.9 and try a message that is only half a question, like "Maybe tomorrow?".',
     calls: 1,
     workspace: ws(
@@ -173,8 +173,8 @@ export const jevLessons: JevLesson[] = [
     title: '4. Numbers and comparisons',
     concept:
       'Numbers can be compared with <, =, >. A comparison gives true or false, so it can drive an ordinary "if" block.',
-    jev: '"Jev scores" places text on a scale you describe: 0 means rude, 1 neutral, 2 polite. The result is a number, so you compare it like any other.',
-    tryIt: 'Add a fourth level, "3 means warm and grateful", and raise the comparison to 2.5.',
+    jev: 'A Score places text on a scale you describe: 0 is rude, 1 neutral, 2 polite. The result is a number, so you compare it like any other.',
+    tryIt: 'Add a fourth level, "3 : warm and grateful", and raise the comparison to 2.5.',
     calls: 1,
     workspace: ws(
       seq(
@@ -194,8 +194,8 @@ export const jevLessons: JevLesson[] = [
     title: '5. Choosing between many options',
     concept:
       'When there are more than two possibilities, a switch picks one branch out of many. "otherwise" is the safety net when nothing fits well.',
-    jev: 'Jev picks one option from the labels you write. Each option has a meaning so Jev knows what it covers. "otherwise" runs when Jev is not confident enough.',
-    tryIt: 'Add a case "account" meaning "Passwords, sign-in, profile" and write a ticket that matches it.',
+    jev: 'A Choice picks one option from the labels you write. Each option has a description so Jev knows what it covers. "otherwise" runs when confidence is too low.',
+    tryIt: 'Add a case "account : Passwords, sign-in, profile" and write a ticket that matches it.',
     calls: 1,
     workspace: ws(
       seq(
@@ -218,7 +218,7 @@ export const jevLessons: JevLesson[] = [
     title: '6. Lists and loops',
     concept:
       'A list holds many values in order. "for each item in list" runs the same blocks once per item, with "item" holding the current value.',
-    jev: 'Jev runs once per item. Here it names the language of each message, so the loop translates a chore into three quick judgments.',
+    jev: 'The Choice runs once per item. Here it names the language of each message, so the loop turns a chore into three quick judgments.',
     tryIt: 'Add a fourth message in Portuguese and a fourth option "pt".',
     calls: 3,
     workspace: ws(
@@ -238,7 +238,7 @@ export const jevLessons: JevLesson[] = [
     title: '7. Counting with a loop',
     concept:
       'A counter is a variable that starts at 0 and grows inside a loop. After the loop it holds a total. This pattern is everywhere in programming.',
-    jev: 'The loop asks Jev whether each review is positive and adds 1 when it is. Three small judgments become one useful number.',
+    jev: 'The loop asks a Noul whether each review is positive and adds 1 when it is. Three small judgments become one useful number.',
     tryIt: 'Count negative reviews too, with a second counter and "not" around the Jev block.',
     calls: 3,
     workspace: ws(
@@ -262,7 +262,7 @@ export const jevLessons: JevLesson[] = [
     title: '8. Combining conditions',
     concept:
       '"and", "or" and "not" combine true/false values. "A and B" is true only when both are. This lets one "if" express a rule with several parts.',
-    jev: 'Two separate Jev judgments, urgent and angry, are combined with "and". Keeping judgments separate keeps each one simple and lets you reuse them.',
+    jev: 'Two separate Nouls, urgent and angry, are combined with "and". Keeping judgments separate keeps each one simple and lets you reuse them.',
     tryIt: 'Change "and" to "or", then write a message that is angry but not urgent.',
     calls: 2,
     workspace: ws(
@@ -289,7 +289,7 @@ export const jevLessons: JevLesson[] = [
     title: '9. Functions',
     concept:
       'A function wraps blocks under a name so you can call them again with different inputs. "text" is a parameter: a variable that receives whatever you pass in.',
-    jev: 'The function "mood of" asks Jev once and returns the label. Calling it twice reuses the same judgment on two messages without copying blocks.',
+    jev: 'The function "mood of" wraps one Choice and returns its label. Calling it twice reuses the same judgment on two messages without copying blocks.',
     tryIt: 'Add a third call with your own sentence, then add a fourth mood.',
     calls: 2,
     workspace: ws(
@@ -321,7 +321,7 @@ export const jevLessons: JevLesson[] = [
     title: '10. A small assistant',
     concept:
       'Real programs combine everything: a list, a loop, variables, functions, decisions and numbers. Read this one top to bottom and name each idea from lessons 1 to 9.',
-    jev: 'For every message the assistant asks Jev for a category and an urgency score, then code decides what to do. Jev supplies judgment; the rules stay in your blocks.',
+    jev: 'For every message the assistant asks a Choice for the category and a Score for urgency, then code decides what to do. Jev supplies judgment; the rules stay in your blocks.',
     tryIt: 'Add a "priority" counter that only grows when urgency is above 1.5 and the category is billing.',
     calls: 6,
     workspace: ws(

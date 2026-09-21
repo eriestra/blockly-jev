@@ -31,12 +31,12 @@ type JevSwitchBlock = Blockly.Block & JevSwitchMixin;
 Blockly.defineBlocksWithJsonArray([
   {
     type: JEV_SWITCH_TYPE,
-    message0: 'switch on what Jev picks for %1 about %2',
+    message0: 'switch Choice %1 about %2',
     args0: [
       { type: 'field_input', name: 'ASK', text: 'Which team should handle this?' },
       { type: 'input_value', name: 'STATE' },
     ],
-    message1: 'use otherwise when less than %1 confident',
+    message1: 'otherwise if confidence < %1',
     args1: [
       { type: 'field_number', name: 'MIN_CONFIDENCE', value: 0, min: 0, max: 1, precision: 0.01 },
     ],
@@ -45,8 +45,7 @@ Blockly.defineBlocksWithJsonArray([
     nextStatement: null,
     colour: JEV_COLOUR,
     tooltip:
-      'Asks Jev to pick one option (a Choice) about the state and runs the matching case. ' +
-      'Add cases with the gear. "otherwise" runs when the answer is not confident enough.',
+      'Choice: picks one of your cases and runs it. Add cases with the gear. "otherwise" runs when confidence is below the limit.',
     helpUrl: 'https://docs.typesafe.ai/primitives/choice',
     mutator: 'jev_switch_mutator',
   },
@@ -180,7 +179,7 @@ const JEV_SWITCH_MUTATOR_MIXIN: JevSwitchMixin = {
       this.appendDummyInput(`CASE${c}`)
         .appendField('case')
         .appendField(new Blockly.FieldTextInput(`option_${c + 1}`), `LABEL${c}`)
-        .appendField('meaning')
+        .appendField(':')
         .appendField(new Blockly.FieldTextInput(''), `DESC${c}`);
       this.appendStatementInput(`DO${c}`);
     }

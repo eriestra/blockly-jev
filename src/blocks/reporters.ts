@@ -14,12 +14,12 @@ export const JEV_SCORE_TYPE = 'jev_score';
 Blockly.defineBlocksWithJsonArray([
   {
     type: JEV_NOUL_TYPE,
-    message0: 'Jev says yes to %1 about %2',
+    message0: 'Noul %1 about %2',
     args0: [
       { type: 'field_input', name: 'ASK', text: 'Is this a complaint?' },
       { type: 'input_value', name: 'STATE' },
     ],
-    message1: 'at least %1 sure %2 describe yes and no',
+    message1: 'yes if ≥ %1 %2 criteria',
     args1: [
       { type: 'field_number', name: 'THRESHOLD', value: 0.5, min: 0, max: 1, precision: 0.01 },
       { type: 'field_checkbox', name: 'WITH_CRITERIA', checked: false },
@@ -27,29 +27,29 @@ Blockly.defineBlocksWithJsonArray([
     inputsInline: false,
     output: 'Boolean',
     colour: JEV_COLOUR,
-    tooltip: 'True when the probability of yes reaches the threshold. A Noul.',
+    tooltip: 'Noul: a yes/no judgment. True when the probability of yes is at least the threshold.',
     helpUrl: 'https://docs.typesafe.ai/primitives/noul',
     extensions: ['jev_noul_criteria'],
   },
   {
     type: JEV_PROBABILITY_TYPE,
-    message0: 'how sure Jev is that %1 about %2',
+    message0: 'Noul probability %1 about %2',
     args0: [
       { type: 'field_input', name: 'ASK', text: 'the customer is angry' },
       { type: 'input_value', name: 'STATE' },
     ],
-    message1: '%1 describe yes and no',
+    message1: '%1 criteria',
     args1: [{ type: 'field_checkbox', name: 'WITH_CRITERIA', checked: false }],
     inputsInline: false,
     output: 'Number',
     colour: JEV_COLOUR,
-    tooltip: 'The probability of yes, from 0 to 1. A Noul.',
+    tooltip: 'Noul: the probability of yes, from 0 to 1.',
     helpUrl: 'https://docs.typesafe.ai/primitives/noul',
     extensions: ['jev_noul_criteria'],
   },
   {
     type: JEV_CHOICE_TYPE,
-    message0: 'Jev picks for %1 about %2',
+    message0: 'Choice %1 about %2',
     args0: [
       { type: 'field_input', name: 'ASK', text: 'Which language is this?' },
       { type: 'input_value', name: 'STATE' },
@@ -57,13 +57,13 @@ Blockly.defineBlocksWithJsonArray([
     inputsInline: false,
     output: 'String',
     colour: JEV_COLOUR,
-    tooltip: 'The name of the option Jev picks. A Choice. Add options with +.',
+    tooltip: 'Choice: picks one of your options and returns its name. Add options with +.',
     helpUrl: 'https://docs.typesafe.ai/primitives/choice',
     mutator: 'jev_choice_options',
   },
   {
     type: JEV_SCORE_TYPE,
-    message0: 'Jev scores %1 about %2',
+    message0: 'Score %1 about %2',
     args0: [
       { type: 'field_input', name: 'ASK', text: 'How urgent is this?' },
       { type: 'input_value', name: 'STATE' },
@@ -72,7 +72,7 @@ Blockly.defineBlocksWithJsonArray([
     output: 'Number',
     colour: JEV_COLOUR,
     tooltip:
-      'Expected score on an ordered scale you describe, from 0 to the last level. A Score. Add levels with +.',
+      'Score: a number on the scale you describe, from 0 to the last level. Add levels with +.',
     helpUrl: 'https://docs.typesafe.ai/primitives/score',
     mutator: 'jev_score_levels',
   },
@@ -84,9 +84,8 @@ registerCountMutator('jev_choice_options', {
   addRow(block, i) {
     block
       .appendDummyInput(`OPTION${i}`)
-      .appendField('option')
       .appendField(new Blockly.FieldTextInput(`option_${i + 1}`), `LABEL${i}`)
-      .appendField('meaning')
+      .appendField(':')
       .appendField(new Blockly.FieldTextInput(''), `DESC${i}`);
   },
   removeRow(block, i) {
@@ -100,7 +99,7 @@ registerCountMutator('jev_score_levels', {
   addRow(block, i) {
     block
       .appendDummyInput(`LEVEL${i}`)
-      .appendField(`${i} means`)
+      .appendField(`${i} :`)
       .appendField(new Blockly.FieldTextInput(''), `DESC${i}`);
   },
   removeRow(block, i) {

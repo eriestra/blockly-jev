@@ -13,9 +13,9 @@ Blockly.Extensions.register('jev_noul_criteria', function (this: Blockly.Block) 
     if (show && !existing) {
       block
         .appendDummyInput('CRITERIA')
-        .appendField('yes means')
+        .appendField('yes :')
         .appendField(new Blockly.FieldTextInput(''), 'YES_MEANS')
-        .appendField('no means')
+        .appendField('no :')
         .appendField(new Blockly.FieldTextInput(''), 'NO_MEANS');
       if (block.getInput('DO')) block.moveInputBefore('CRITERIA', 'DO');
     } else if (!show && existing) {

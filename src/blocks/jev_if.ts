@@ -13,12 +13,12 @@ export const JEV_IF_TYPE = 'jev_if';
 Blockly.defineBlocksWithJsonArray([
   {
     type: JEV_IF_TYPE,
-    message0: 'if Jev says yes to %1 about %2',
+    message0: 'if Noul %1 about %2',
     args0: [
       { type: 'field_input', name: 'ASK', text: 'Is this a refund request?' },
       { type: 'input_value', name: 'STATE' },
     ],
-    message1: 'at least %1 sure %2 describe yes and no',
+    message1: 'yes if ≥ %1 %2 criteria',
     args1: [
       { type: 'field_number', name: 'THRESHOLD', value: 0.5, min: 0, max: 1, precision: 0.01 },
       { type: 'field_checkbox', name: 'WITH_CRITERIA', checked: false },
@@ -32,8 +32,7 @@ Blockly.defineBlocksWithJsonArray([
     nextStatement: null,
     colour: JEV_COLOUR,
     tooltip:
-      'Asks Jev a yes/no question (a Noul) about the state. Runs "then" when the ' +
-      'probability of yes reaches the threshold, otherwise "else".',
+      'Noul: a yes/no judgment. Runs "then" when the probability of yes is at least the threshold, otherwise "else".',
     helpUrl: 'https://docs.typesafe.ai/primitives/noul',
     extensions: ['jev_noul_criteria'],
   },
