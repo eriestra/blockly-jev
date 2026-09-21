@@ -2,6 +2,7 @@ import * as Blockly from 'blockly';
 import { javascriptGenerator } from 'blockly/javascript';
 import {
   almondTheme,
+  checkChallenge,
   installJevBlocks,
   jevFromAlmond,
   jevFromProxy,
@@ -68,12 +69,13 @@ function regenerate() {
 }
 workspace.addChangeListener((e) => { if (!e.isUiEvent) regenerate(); });
 
-// ---- progress (which lessons were run successfully) ----
-const DONE_KEY = 'jev-done';
+// ---- progress (which challenges Jev judged complete) ----
+const DONE_KEY = 'jev-passed';
 function loadDone(): Set<string> {
   try { return new Set(JSON.parse(localStorage.getItem(DONE_KEY) ?? '[]')); } catch { return new Set(); }
 }
 const done = loadDone();
+let lastOutput: string[] = [];
 function saveDone() { try { localStorage.setItem(DONE_KEY, JSON.stringify([...done])); } catch {} }
 
 // ---- lesson rail ----
@@ -99,7 +101,7 @@ function paintRail() {
     step.classList.toggle('active', id === currentId);
     step.classList.toggle('done', isDone && id !== currentId);
     const dot = step.querySelector('.dot')!;
-    dot.textContent = isDone && id !== currentId ? '✓' : String(i + 1);
+    dot.textContent = isDone ? '✓' : String(i + 1);
     step.setAttribute('aria-current', id === currentId ? 'step' : 'false');
   });
   const idx = jevLessons.findIndex((l) => l.id === currentId);
@@ -142,6 +144,7 @@ function loadLesson(id: string) {
   const lesson = jevLessons.find((l) => l.id === id) ?? jevLessons[0];
   currentId = lesson.id;
   const n = jevLessons.indexOf(lesson) + 1;
+  lastOutput = [];
   loadWorkspace(lesson.workspace, `${lesson.calls} Jev call${lesson.calls === 1 ? '' : 's'} per run`);
   eyebrowEl.textContent = `Lesson ${n} of ${jevLessons.length}`;
   lessonText.innerHTML = '';
@@ -171,8 +174,32 @@ function loadLesson(id: string) {
     solBtn.textContent = 'Solution loaded';
     solBtn.disabled = true;
   });
-  actions.append(hintBtn, solBtn);
-  ch.append(chHead, hintList, actions);
+  const checkBtn = document.createElement('button'); checkBtn.className = 'btn small primary'; checkBtn.type = 'button'; checkBtn.textContent = 'Check with Jev';
+  const verdictEl = document.createElement('p'); verdictEl.className = 'verdict'; verdictEl.hidden = true;
+  checkBtn.addEventListener('click', async () => {
+    checkBtn.disabled = true; checkBtn.textContent = 'Checking…';
+    verdictEl.hidden = true;
+    try {
+      const learner = javascriptGenerator.workspaceToCode(workspace);
+      const scratch = new Blockly.Workspace();
+      Blockly.serialization.workspaces.load(lesson.challenge.solution as any, scratch);
+      const reference = javascriptGenerator.workspaceToCode(scratch);
+      scratch.dispose();
+      const result = await checkChallenge(jev, lesson, learner, lastOutput, reference);
+      verdictEl.textContent = result.message;
+      verdictEl.className = 'verdict ' + (result.passed ? 'pass' : 'fail');
+      verdictEl.hidden = false;
+      if (result.passed) { done.add(lesson.id); saveDone(); paintRail(); }
+    } catch (err) {
+      verdictEl.textContent = 'Could not check: ' + (err instanceof Error ? err.message : String(err));
+      verdictEl.className = 'verdict fail';
+      verdictEl.hidden = false;
+    } finally {
+      checkBtn.disabled = false; checkBtn.textContent = 'Check with Jev';
+    }
+  });
+  actions.append(checkBtn, hintBtn, solBtn);
+  ch.append(chHead, hintList, actions, verdictEl);
 
   lessonText.append(h, lead, ...theory, jevP, ch);
   try { localStorage.setItem('jev-lesson', lesson.id); } catch {}
@@ -207,9 +234,7 @@ runBtn.addEventListener('click', async () => {
   try {
     await runJevProgram(javascriptGenerator.workspaceToCode(workspace), { jev, print });
     setOutput(lines, 'done');
-    done.add(currentId);
-    saveDone();
-    paintRail();
+    lastOutput = lines;
   } catch (err) {
     lines.push('Error: ' + (err instanceof Error ? err.message : String(err)));
     setOutput(lines, 'error');

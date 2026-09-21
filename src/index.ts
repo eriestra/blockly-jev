@@ -15,6 +15,8 @@ export * from './runtime/index';
 export { runJevProgram } from './runtime/run';
 export { almondTheme, almondPalette } from './theme';
 export { jevLessons } from './lessons';
+export { checkChallenge, VERDICT_MESSAGES } from './validate';
+export type { ChallengeCheck, ChallengeVerdict } from './validate';
 export type { JevLesson } from './lessons';
 export { jevFromAlmond, ALMOND_MAX_CHOICE_OPTIONS, ALMOND_MAX_SCORE_LEVELS } from './runtime/almond';
 export type { AlmondOptions } from './runtime/almond';

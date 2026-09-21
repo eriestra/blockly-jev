@@ -108,6 +108,13 @@ lesson, for example `https://sites.almond.build/blockly-jev/#functions`.
 | 9 | Functions | parameters, reuse | a judgment wrapped as a function | an "is urgent" function called twice |
 | 10 | A small assistant | everything together | category plus urgency per message, rules in code | a second, stricter counter |
 
+`checkChallenge(jev, lesson, learnerCode, output, referenceCode)` asks Jev
+whether a learner's program meets the challenge: a Noul for pass/fail and a
+Choice for the most useful feedback (not started, missing Jev question, wrong
+question, wrong logic, wrong output). The demo's "Check with Jev" button uses
+it and marks a lesson complete on the rail only when the check passes. Two
+Jev calls per check.
+
 Blockly's stock function blocks generate plain functions; the package makes
 them `async` and awaits calls, so Jev reporters work inside functions.
 
