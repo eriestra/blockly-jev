@@ -1,6 +1,6 @@
 import * as Blockly from 'blockly';
 import { javascriptGenerator } from 'blockly/javascript';
-import { installJevBlocks, jevFromAlmond, jevFromProxy, jevToolboxCategory } from '../src/index';
+import { installJevBlocks, jevFromAlmond, jevFromProxy, jevLessons, jevToolboxCategory } from '../src/index';
 
 installJevBlocks();
 
@@ -9,12 +9,14 @@ const toolbox = {
   contents: [
     jevToolboxCategory,
     { kind: 'category', name: 'Logic', categorystyle: 'logic_category', contents: [
-      { kind: 'block', type: 'controls_if' }, { kind: 'block', type: 'logic_compare' }, { kind: 'block', type: 'logic_boolean' },
+      { kind: 'block', type: 'controls_if' }, { kind: 'block', type: 'logic_compare' }, { kind: 'block', type: 'logic_operation' },
+      { kind: 'block', type: 'logic_negate' }, { kind: 'block', type: 'logic_boolean' },
     ]},
     { kind: 'category', name: 'Text', categorystyle: 'text_category', contents: [
       { kind: 'block', type: 'text' }, { kind: 'block', type: 'text_print' }, { kind: 'block', type: 'text_join' },
     ]},
     { kind: 'category', name: 'Loops', categorystyle: 'loop_category', contents: [
+      { kind: 'block', type: 'controls_repeat_ext', inputs: { TIMES: { shadow: { type: 'math_number', fields: { NUM: 3 } } } } },
       { kind: 'block', type: 'controls_whileUntil' }, { kind: 'block', type: 'controls_forEach' },
     ]},
     { kind: 'category', name: 'Math', categorystyle: 'math_category', contents: [
@@ -24,55 +26,11 @@ const toolbox = {
       { kind: 'block', type: 'lists_create_with' }, { kind: 'block', type: 'lists_length' }, { kind: 'block', type: 'lists_getIndex' },
     ]},
     { kind: 'category', name: 'Variables', categorystyle: 'variable_category', custom: 'VARIABLE' },
+    { kind: 'category', name: 'Functions', categorystyle: 'procedure_category', custom: 'PROCEDURE' },
   ],
 };
 
 const workspace = Blockly.inject('blockly', { toolbox, trashcan: true, zoom: { controls: true } });
-
-const example = {
-  blocks: { languageVersion: 0, blocks: [
-    { type: 'variables_set', x: 20, y: 20, fields: { VAR: { name: 'ticket' } },
-      inputs: { VALUE: { block: { type: 'text', fields: { TEXT: 'I was charged twice this month. Please refund the second charge, this is urgent.' } } } },
-      next: { block: { type: 'jev_if',
-        fields: { ASK: 'Is the customer asking for a refund?', THRESHOLD: 0.5, WITH_CRITERIA: 'FALSE' },
-        inputs: {
-          STATE: { block: { type: 'variables_get', fields: { VAR: { name: 'ticket' } } } },
-          DO: { block: { type: 'text_print', inputs: { TEXT: { shadow: { type: 'text', fields: { TEXT: 'Refund flow' } } } } } },
-          ELSE: { block: { type: 'text_print', inputs: { TEXT: { shadow: { type: 'text', fields: { TEXT: 'Not a refund' } } } } } },
-        },
-        next: { block: { type: 'jev_switch',
-          extraState: { cases: 3, hasDefault: true },
-          fields: { ASK: 'Which team should handle this ticket?', MIN_CONFIDENCE: 0.6,
-            LABEL0: 'billing', DESC0: 'Charges, invoices, refunds',
-            LABEL1: 'technical', DESC1: 'Bugs, errors, things not working',
-            LABEL2: 'sales', DESC2: 'Pricing, plans, upgrades' },
-          inputs: {
-            STATE: { block: { type: 'variables_get', fields: { VAR: { name: 'ticket' } } } },
-            DO0: { block: { type: 'text_print', inputs: { TEXT: { shadow: { type: 'text', fields: { TEXT: 'Route to billing' } } } } } },
-            DO1: { block: { type: 'text_print', inputs: { TEXT: { shadow: { type: 'text', fields: { TEXT: 'Route to technical' } } } } } },
-            DO2: { block: { type: 'text_print', inputs: { TEXT: { shadow: { type: 'text', fields: { TEXT: 'Route to sales' } } } } } },
-            DEFAULT: { block: { type: 'text_print', inputs: { TEXT: { shadow: { type: 'text', fields: { TEXT: 'Not sure, ask a person' } } } } } },
-          },
-          next: { block: { type: 'text_print',
-            inputs: { TEXT: { block: { type: 'text_join', extraState: { itemCount: 2 }, inputs: {
-              ADD0: { block: { type: 'text', fields: { TEXT: 'Urgency 0-2: ' } } },
-              ADD1: { block: { type: 'jev_score', extraState: { count: 3 },
-                fields: { ASK: 'How urgent is this ticket?', DESC0: 'No time pressure', DESC1: 'Wants it handled soon', DESC2: 'Demands immediate action' },
-                inputs: { STATE: { block: { type: 'variables_get', fields: { VAR: { name: 'ticket' } } } } } } },
-            } } } },
-            next: { block: { type: 'controls_if',
-              inputs: {
-                IF0: { block: { type: 'jev_noul', fields: { ASK: 'Is the customer angry?', THRESHOLD: 0.7, WITH_CRITERIA: 'FALSE' },
-                  inputs: { STATE: { block: { type: 'variables_get', fields: { VAR: { name: 'ticket' } } } } } } },
-                DO0: { block: { type: 'text_print', inputs: { TEXT: { shadow: { type: 'text', fields: { TEXT: 'Stock if + Jev reporter: angry customer' } } } } } },
-              },
-            } },
-          } },
-        } },
-      } },
-    },
-  ]},
-};
 
 // Print into the output panel instead of window.alert.
 javascriptGenerator.forBlock['text_print'] = function (block, gen) {
@@ -88,13 +46,39 @@ function regenerate() {
 }
 workspace.addChangeListener((e) => { if (!e.isUiEvent) regenerate(); });
 
-function loadExample() {
-  Blockly.serialization.workspaces.load(example, workspace);
+const lessonSelect = document.getElementById('lesson') as HTMLSelectElement;
+const lessonText = document.getElementById('lesson-text')!;
+for (const lesson of jevLessons) {
+  const opt = document.createElement('option');
+  opt.value = lesson.id;
+  opt.textContent = lesson.title;
+  lessonSelect.appendChild(opt);
+}
+
+function loadLesson(id: string) {
+  const lesson = jevLessons.find((l) => l.id === id) ?? jevLessons[0];
+  lessonSelect.value = lesson.id;
+  Blockly.serialization.workspaces.load(lesson.workspace as any, workspace);
+  lessonText.innerHTML = '';
+  const h = document.createElement('h3'); h.textContent = lesson.title;
+  const p1 = document.createElement('p'); p1.textContent = lesson.concept;
+  const p2 = document.createElement('p'); p2.innerHTML = '<b>Jev:</b> '; p2.append(lesson.jev);
+  const p3 = document.createElement('p'); p3.innerHTML = '<b>Try it:</b> '; p3.append(lesson.tryIt);
+  const p4 = document.createElement('p'); p4.style.color = '#6b6864'; p4.textContent = `One run makes ${lesson.calls} Jev call${lesson.calls === 1 ? '' : 's'}.`;
+  lessonText.append(h, p1, p2, p3, p4);
+  outEl.textContent = '';
+  try { localStorage.setItem('jev-lesson', lesson.id); } catch {}
+  history.replaceState(null, '', `#${lesson.id}`);
   regenerate();
 }
-loadExample();
+
+let initial = location.hash.slice(1);
+if (!initial) { try { initial = localStorage.getItem('jev-lesson') ?? ''; } catch {} }
+loadLesson(initial || jevLessons[0].id);
 (window as any).workspace = workspace; // handy in DevTools
-document.getElementById('reset')!.addEventListener('click', loadExample);
+(window as any).loadLesson = loadLesson;
+lessonSelect.addEventListener('change', () => loadLesson(lessonSelect.value));
+document.getElementById('reset')!.addEventListener('click', () => loadLesson(lessonSelect.value));
 
 const onAlmond = import.meta.env.VITE_JEV_RUNTIME === 'almond';
 const jev = onAlmond ? jevFromAlmond() : jevFromProxy();

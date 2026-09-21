@@ -86,6 +86,34 @@ to a same-origin endpoint; `server/proxy.mjs` is a dependency-free Node
 proxy that validates the body and forwards it with the official SDK. On a
 server or in Node, use `jevFromClient(new TypeSafeClient())` directly.
 
+## Learn to code with Jev: ten lessons
+
+`jevLessons` (also `blockly-jev/lessons`) is a curriculum of ten workspaces
+with teacher text, each introducing one programming idea and using Jev in it.
+The hosted demo has a lesson picker; the URL hash selects a lesson, for example
+`https://sites.almond.build/blockly-jev/#functions`.
+
+| # | Lesson | Idea | Jev's part | Calls per run |
+| --- | --- | --- | --- | --- |
+| 1 | Hello, world | sequence, output, values | a true/false value from a yes/no question | 1 |
+| 2 | Variables | naming and reusing values | a probability as a number | 1 |
+| 3 | If and else | branching | Noul as the condition, threshold | 1 |
+| 4 | Numbers and comparisons | numbers, `<` `=` `>` | Score on a described scale | 1 |
+| 5 | Choosing between many options | switch, default case | Choice with described options, confidence gate | 1 |
+| 6 | Lists and loops | collections, for-each | one judgment per item | 3 |
+| 7 | Counting with a loop | accumulator | Noul inside the loop | 3 |
+| 8 | Combining conditions | and, or, not | two independent judgments combined | 2 |
+| 9 | Functions | parameters, reuse | a judgment wrapped as a function | 2 |
+| 10 | A small assistant | everything together | category plus urgency per message, rules in code | 6 |
+
+Blockly's stock function blocks generate plain functions; the package makes
+them `async` and awaits calls, so Jev reporters work inside functions.
+
+```ts
+import { jevLessons } from 'blockly-jev/lessons';
+Blockly.serialization.workspaces.load(jevLessons[8].workspace, workspace);
+```
+
 ## Generated code
 
 ```js

@@ -14,7 +14,12 @@
     button.primary { background: #6a3d9a; color: #fff; border-color: #6a3d9a; }
     main { display: grid; grid-template-columns: 1fr 380px; height: calc(100vh - 49px); }
     #blockly { height: 100%; }
-    aside { border-left: 1px solid var(--line); display: grid; grid-template-rows: auto 1fr auto 1fr; background: var(--panel); }
+    aside { border-left: 1px solid var(--line); display: grid; grid-template-rows: auto auto auto 1fr auto 1fr; background: var(--panel); min-height: 0; }
+    select { font: inherit; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--line); background: #fff; max-width: 40vw; }
+    #lesson-text { padding: 12px; font-size: 13px; line-height: 1.5; border-bottom: 1px solid var(--line); }
+    #lesson-text h3 { margin: 0 0 6px; font-size: 15px; }
+    #lesson-text p { margin: 0 0 8px; }
+    #lesson-text b { color: #6a3d9a; }
     aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; margin: 0; padding: 8px 12px; border-bottom: 1px solid var(--line); color: #6b6864; }
     pre { margin: 0; padding: 12px; overflow: auto; font: 12px/1.45 ui-monospace, Menlo, monospace; white-space: pre-wrap; }
     #output { border-top: 1px solid var(--line); }
@@ -25,12 +30,15 @@
   <header>
     <h1>Blockly + Jev <small id="runtime" style="font-weight:400;color:#6b6864;margin-left:8px"></small></h1>
     <a href="https://github.com/eriestra/blockly-jev" style="color:#6a3d9a">GitHub</a>
-    <button id="reset">Reset example</button>
+    <select id="lesson" aria-label="Lesson"></select>
+    <button id="reset">Reset lesson</button>
     <button id="run" class="primary">Run</button>
   </header>
   <main>
     <div id="blockly"></div>
     <aside>
+      <h2>Lesson</h2>
+      <div id="lesson-text"></div>
       <h2>Generated JavaScript</h2>
       <pre id="code"></pre>
       <h2>Output</h2>

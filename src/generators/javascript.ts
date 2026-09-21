@@ -50,7 +50,51 @@ function choiceCriteria(block: Blockly.Block, count: number): { labels: string[]
   return { labels, code: `{${entries.join(', ')}}` };
 }
 
+/**
+ * Blockly's stock procedure blocks emit plain functions. Jev reporters need
+ * `await`, so definitions become `async function` and calls are awaited.
+ */
+function makeProceduresAsync(generator: JavascriptGenerator): void {
+  for (const type of ['procedures_defreturn', 'procedures_defnoreturn']) {
+    const original = generator.forBlock[type];
+    if (!original || (original as any).jevAsync) continue;
+    const patched = function (this: unknown, block: Blockly.Block, gen: JavascriptGenerator) {
+      const result = original.call(this, block, gen);
+      const defs = (gen as any).definitions_ as Record<string, string>;
+      for (const key of Object.keys(defs)) {
+        // Blockly may prefix the definition with a comment line, so anchor on line start.
+        if (key.startsWith('%') && /(^|\n)function /.test(defs[key])) {
+          defs[key] = defs[key].replace(/(^|\n)function /, '$1async function ');
+        }
+      }
+      return result;
+    };
+    (patched as any).jevAsync = true;
+    generator.forBlock[type] = patched;
+  }
+  const callReturn = generator.forBlock['procedures_callreturn'];
+  if (callReturn && !(callReturn as any).jevAsync) {
+    const patched = function (this: unknown, block: Blockly.Block, gen: JavascriptGenerator) {
+      const result = callReturn.call(this, block, gen);
+      if (Array.isArray(result)) return [`(await ${result[0]})`, Order.ATOMIC] as [string, number];
+      return result;
+    };
+    (patched as any).jevAsync = true;
+    generator.forBlock['procedures_callreturn'] = patched;
+  }
+  const callNoReturn = generator.forBlock['procedures_callnoreturn'];
+  if (callNoReturn && !(callNoReturn as any).jevAsync) {
+    const patched = function (this: unknown, block: Blockly.Block, gen: JavascriptGenerator) {
+      const result = callNoReturn.call(this, block, gen);
+      return typeof result === 'string' ? 'await ' + result : result;
+    };
+    (patched as any).jevAsync = true;
+    generator.forBlock['procedures_callnoreturn'] = patched;
+  }
+}
+
 export function installJavascript(generator: JavascriptGenerator = javascriptGenerator): void {
+  makeProceduresAsync(generator);
   // --- statement blocks -----------------------------------------------------
 
   generator.forBlock[JEV_IF_TYPE] = function (block, gen) {
