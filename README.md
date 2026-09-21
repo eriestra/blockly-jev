@@ -22,7 +22,9 @@ Reporter blocks with a variable number of rows (`jev_choice` options,
 `jev_score` levels) grow with +/− buttons on the block. `jev_switch` uses the
 standard mutator gear so cases can be reordered.
 
-**Live demo:** https://sites.almond.build/blockly-jev/ (hosted on Almond, quota-limited).
+**Live demo:** https://sites.almond.build/blockly-jev/ — made with
+[Almond](https://almond.build), which hosts the page, holds the TypeSafe key,
+and meters the Jev calls. No server was written for it.
 
 ## Install
 

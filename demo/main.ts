@@ -223,6 +223,10 @@ loadLesson(initial || jevLessons[0].id);
 (window as any).confetti = confetti;
 
 $('reset').addEventListener('click', () => loadLesson(currentId));
+const howDialog = $<HTMLDialogElement>('how-dialog');
+$('how').addEventListener('click', () => howDialog.showModal());
+$('how-close').addEventListener('click', () => howDialog.close());
+howDialog.addEventListener('click', (e) => { if (e.target === howDialog) howDialog.close(); });
 $('prev').addEventListener('click', () => { const i = jevLessons.findIndex((l) => l.id === currentId); if (i > 0) loadLesson(jevLessons[i - 1].id); });
 $('next').addEventListener('click', () => { const i = jevLessons.findIndex((l) => l.id === currentId); if (i < jevLessons.length - 1) loadLesson(jevLessons[i + 1].id); });
 window.addEventListener('hashchange', () => {
