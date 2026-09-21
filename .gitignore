@@ -5,3 +5,4 @@ demo-dist/
 .env.*
 !.env.example
 .DS_Store
+demo-dist-almond/

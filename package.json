@@ -25,6 +25,7 @@
     "proxy": "node server/proxy.mjs",
     "build": "tsc -p tsconfig.build.json",
     "build:demo": "vite build",
+    "build:demo:almond": "VITE_JEV_RUNTIME=almond vite build --outDir ../demo-dist-almond",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },

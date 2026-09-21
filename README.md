@@ -22,6 +22,8 @@ Reporter blocks with a variable number of rows (`jev_choice` options,
 `jev_score` levels) grow with +/− buttons on the block. `jev_switch` uses the
 standard mutator gear so cases can be reordered.
 
+**Live demo:** https://sites.almond.build/blockly-jev/ (hosted on Almond, quota-limited).
+
 ## Install
 
 ```sh
@@ -63,6 +65,19 @@ interface JevRuntime {
   score(state, instructions, levels): Promise<{ score: number; confidence: number; probabilities }>;
 }
 ```
+
+### Hosting on Almond
+
+`jevFromAlmond()` (also exported from `blockly-jev/runtime/almond`) runs the
+same blocks on an [Almond](https://almond.build) page with no server of your
+own. Almond stores the TypeSafe key as a site secret and exposes fixed,
+quota-limited protected calls that only that site's pages can invoke. Because
+those calls take scalar inputs, the runtime uses one contract per shape:
+`jev_noul`, `jev_noul_described`, `jev_score_2..5` and `jev_choice_2..6`
+(options travel as slots whose descriptions carry the real label and meaning,
+and the picked slot is mapped back). `probabilities` is not available on this
+runtime. The contracts are defined once with Almond's `protected_call_put`;
+see `docs/almond.md` for the exact templates.
 
 ### Keep the API key on a server
 

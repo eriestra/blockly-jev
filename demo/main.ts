@@ -1,6 +1,6 @@
 import * as Blockly from 'blockly';
 import { javascriptGenerator } from 'blockly/javascript';
-import { installJevBlocks, jevFromProxy, jevToolboxCategory } from '../src/index';
+import { installJevBlocks, jevFromAlmond, jevFromProxy, jevToolboxCategory } from '../src/index';
 
 installJevBlocks();
 
@@ -96,7 +96,11 @@ loadExample();
 (window as any).workspace = workspace; // handy in DevTools
 document.getElementById('reset')!.addEventListener('click', loadExample);
 
-const jev = jevFromProxy();
+const onAlmond = import.meta.env.VITE_JEV_RUNTIME === 'almond';
+const jev = onAlmond ? jevFromAlmond() : jevFromProxy();
+document.getElementById('runtime')!.textContent = onAlmond
+  ? 'Runs on Almond: the TypeSafe key stays in Almond protected calls (quota-limited demo).'
+  : 'Runs through the local Node proxy on :8787.';
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
 
 document.getElementById('run')!.addEventListener('click', async () => {

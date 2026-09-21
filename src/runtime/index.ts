@@ -31,15 +31,17 @@ export interface ChoiceAnswer<L extends string = string> {
   type: 'choice';
   choice: L;
   confidence: number;
-  probabilities: Record<L, number>;
+  /** Absent on bounded runtimes that only project scalars, such as Almond. */
+  probabilities?: Record<L, number>;
 }
 
 export interface ScoreAnswer {
   type: 'score';
   score: number;
   confidence: number;
-  probabilities: Record<string, number>;
-  legend: Record<string, EntryType>;
+  /** Absent on bounded runtimes that only project scalars, such as Almond. */
+  probabilities?: Record<string, number>;
+  legend?: Record<string, EntryType>;
 }
 
 export interface JevRuntime {
