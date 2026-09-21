@@ -1,5 +1,6 @@
 import * as Blockly from 'blockly';
 import { javascriptGenerator } from 'blockly/javascript';
+import { confetti } from './confetti';
 import {
   almondTheme,
   checkChallenge,
@@ -191,7 +192,11 @@ function loadLesson(id: string) {
       verdictEl.title = result.results.map((r) => `${r.passed ? '✓' : '✗'} ${r.requirement} (${r.probability.toFixed(2)})`).join('\n');
       verdictEl.className = 'verdict ' + (result.passed ? 'pass' : 'fail');
       verdictEl.hidden = false;
-      if (result.passed) { done.add(lesson.id); saveDone(); paintRail(); }
+      if (result.passed) {
+        done.add(lesson.id); saveDone(); paintRail();
+        const r = verdictEl.getBoundingClientRect();
+        confetti({ x: r.left + r.width / 2, y: r.top });
+      }
     } catch (err) {
       verdictEl.textContent = 'Could not check: ' + (err instanceof Error ? err.message : String(err));
       verdictEl.className = 'verdict fail';
@@ -215,6 +220,7 @@ if (!initial) { try { initial = localStorage.getItem('jev-lesson') ?? ''; } catc
 loadLesson(initial || jevLessons[0].id);
 (window as any).workspace = workspace; // handy in DevTools
 (window as any).loadLesson = loadLesson;
+(window as any).confetti = confetti;
 
 $('reset').addEventListener('click', () => loadLesson(currentId));
 $('prev').addEventListener('click', () => { const i = jevLessons.findIndex((l) => l.id === currentId); if (i > 0) loadLesson(jevLessons[i - 1].id); });
