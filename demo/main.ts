@@ -41,9 +41,8 @@ const toolbox = {
 const workspace = Blockly.inject('blockly', {
   toolbox,
   theme: almondTheme,
-  renderer: 'zelos',
   trashcan: true,
-  zoom: { controls: true, wheel: false, startScale: 0.85 },
+  zoom: { controls: true, wheel: false, startScale: 1 },
   grid: { spacing: 24, length: 2, colour: '#e6e0d5', snap: false },
   move: { scrollbars: true, drag: true, wheel: true },
 });
