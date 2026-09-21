@@ -109,11 +109,17 @@ lesson, for example `https://sites.almond.build/blockly-jev/#functions`.
 | 10 | A small assistant | everything together | category plus urgency per message, rules in code | a second, stricter counter |
 
 `checkChallenge(jev, lesson, learnerCode, output, referenceCode)` asks Jev
-whether a learner's program meets the challenge: a Noul for pass/fail and a
-Choice for the most useful feedback (not started, missing Jev question, wrong
-question, wrong logic, wrong output). The demo's "Check with Jev" button uses
-it and marks a lesson complete on the rail only when the check passes. Two
-Jev calls per check.
+whether a learner's program meets the challenge. Each challenge lists two to
+three concrete requirements; each becomes one Noul over the learner's
+generated code, its output when it has run, and the reference solution as one
+valid approach. The check passes when every requirement passes, and feedback
+names the weakest one. The demo's "Check with Jev" button uses it and marks a
+lesson complete on the rail only when the check passes. Three Jev calls per
+check.
+
+`npm run test:live` (needs `TYPESAFE_API_KEY`) runs the check against the
+real model for all ten lessons: every solution must pass, every untouched
+example must fail, and partial attempts must fail on the expected requirement.
 
 Blockly's stock function blocks generate plain functions; the package makes
 them `async` and awaits calls, so Jev reporters work inside functions.

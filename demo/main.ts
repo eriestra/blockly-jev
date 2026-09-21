@@ -175,6 +175,7 @@ function loadLesson(id: string) {
     solBtn.disabled = true;
   });
   const checkBtn = document.createElement('button'); checkBtn.className = 'btn small primary'; checkBtn.type = 'button'; checkBtn.textContent = 'Check with Jev';
+  checkBtn.title = `${lesson.challenge.requirements.length} Jev calls`;
   const verdictEl = document.createElement('p'); verdictEl.className = 'verdict'; verdictEl.hidden = true;
   checkBtn.addEventListener('click', async () => {
     checkBtn.disabled = true; checkBtn.textContent = 'Checking…';
@@ -187,6 +188,7 @@ function loadLesson(id: string) {
       scratch.dispose();
       const result = await checkChallenge(jev, lesson, learner, lastOutput, reference);
       verdictEl.textContent = result.message;
+      verdictEl.title = result.results.map((r) => `${r.passed ? '✓' : '✗'} ${r.requirement} (${r.probability.toFixed(2)})`).join('\n');
       verdictEl.className = 'verdict ' + (result.passed ? 'pass' : 'fail');
       verdictEl.hidden = false;
       if (result.passed) { done.add(lesson.id); saveDone(); paintRail(); }

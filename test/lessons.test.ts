@@ -37,6 +37,7 @@ describe('lessons', () => {
       expect(l.theory.length).toBeGreaterThanOrEqual(2);
       expect(l.challenge.text.length).toBeGreaterThan(20);
       expect(l.challenge.hints.length).toBeGreaterThanOrEqual(2);
+      expect(l.challenge.requirements.length).toBeGreaterThanOrEqual(2);
       expect(l.challenge.solution).toBeTruthy();
     }
   });

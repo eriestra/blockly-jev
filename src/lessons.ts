@@ -12,6 +12,8 @@
 export interface JevChallenge {
   /** What the learner must build, in one or two sentences. */
   text: string;
+  /** Concrete requirements a solution must meet; each becomes one Jev yes/no check. */
+  requirements: string[];
   /** Progressive hints, from a nudge to almost the answer. */
   hints: string[];
   /** Jev calls one run of the solution makes. */
@@ -151,6 +153,11 @@ export const jevLessons: JevLesson[] = [
     ),
     challenge: {
       text: "Print a greeting in another language, then print two Nouls about it: whether it is a greeting, and whether it is written in Spanish.",
+      requirements: [
+        "Prints a greeting written in a language other than English",
+        "Asks a Noul (jev.noul) whether the greeting text is a greeting, and prints the result",
+        "Asks a Noul (jev.noul) whether the greeting text is written in Spanish, and prints the result",
+      ],
       hints: [
         "You need three print blocks stacked in order.",
         "Duplicate the Noul block (right-click, Duplicate) and change only its question.",
@@ -187,6 +194,11 @@ export const jevLessons: JevLesson[] = [
     ),
     challenge: {
       text: "Store a message in a variable, then print two probabilities about it: how likely the writer sounds happy and how likely they sound worried.",
+      requirements: [
+        "Stores the message in a variable and passes that variable to the Jev questions",
+        "Prints the probability (a jev.noul value) that the writer sounds happy",
+        "Prints the probability (a jev.noul value) that the writer sounds worried or anxious",
+      ],
       hints: [
         "Reuse the \"message\" variable block for both Nouls instead of retyping the text.",
         "Duplicate the print block with the join inside it and change the label and the question.",
@@ -227,6 +239,11 @@ export const jevLessons: JevLesson[] = [
     ),
     challenge: {
       text: "Decide whether a message is a complaint. If it is, print \"Send to support\"; otherwise print \"Send to marketing\". Only treat it as a complaint when Jev is at least 0.7 sure.",
+      requirements: [
+        "Asks a Noul (jev.noul) whether the message is a complaint",
+        "Compares the Noul probability against 0.7 (not 0.5) to decide",
+        "Prints 'Send to support' when it is a complaint and 'Send to marketing' otherwise",
+      ],
       hints: [
         "Start from the example and change the question to \"Is this message a complaint?\".",
         "The threshold field is the number after \"yes if ≥\". Set it to 0.7.",
@@ -273,6 +290,11 @@ export const jevLessons: JevLesson[] = [
     ),
     challenge: {
       text: "Score a message's urgency on three levels (no rush, soon, right now). Print the score, then print \"Handle today\" when it is above 1, otherwise \"Can wait\".",
+      requirements: [
+        "Asks a Score (jev.score) for how urgent the message is, with three levels meaning no rush, soon, and right now",
+        "Prints the urgency score",
+        "Prints 'Handle today' when the score is above 1 and 'Can wait' otherwise",
+      ],
       hints: [
         "Change the Score question and its three level descriptions; keep the variable, but rename it to urgency.",
         "In the compare block choose > and put 1 in the number.",
@@ -322,6 +344,11 @@ export const jevLessons: JevLesson[] = [
     ),
     challenge: {
       text: "Build a language router: when a message is in Spanish reply \"Hola, ¿en qué puedo ayudar?\", in English \"Hi, how can I help?\", in French \"Bonjour, comment puis-je aider ?\". Otherwise print \"Sorry, which language is this?\".",
+      requirements: [
+        "Asks a Choice (jev.choice) for the language of the message with options covering Spanish, English and French",
+        "Each language case prints a greeting or reply in that language",
+        "The low-confidence fallback branch prints an apology asking which language it is",
+      ],
       hints: [
         "Keep the switch block. Change the question to \"Which language is this message written in?\".",
         "Rename the three cases to es, en and fr, with descriptions Spanish, English and French.",
@@ -370,6 +397,11 @@ export const jevLessons: JevLesson[] = [
     ),
     challenge: {
       text: "For each of three messages, print the message, an arrow, and whether it is a question (a Noul that gives true or false).",
+      requirements: [
+        "Loops over a list of three messages",
+        "Inside the loop asks a Noul (jev.noul) whether the current message is a question",
+        "Prints each message together with the Noul result (true or false)",
+      ],
       hints: [
         "Keep the loop and the list. Replace the Choice block inside the join with a Noul block.",
         "The Noul question is \"Is this message a question?\" about the loop variable.",
@@ -414,6 +446,11 @@ export const jevLessons: JevLesson[] = [
     ),
     challenge: {
       text: "Count how many of three messages are questions, and print \"Questions: N of 3\".",
+      requirements: [
+        "Starts a counter at 0 and adds 1 to it inside the loop when the Noul answers yes",
+        "The Noul (jev.noul) asks whether the message is a question",
+        "After the loop prints the count as 'Questions: N of 3'",
+      ],
       hints: [
         "Rename the counter to questions and change the Noul question to \"Is this message a question?\".",
         "Change the three list items so at least one is a statement.",
@@ -469,6 +506,11 @@ export const jevLessons: JevLesson[] = [
     ),
     challenge: {
       text: "Print \"Priority\" when a message is urgent or angry, but only if it is not spam; otherwise print \"Normal\". Use three separate Nouls.",
+      requirements: [
+        "Asks three separate Nouls (jev.noul): whether it is urgent, whether the writer is angry, and whether it is spam",
+        "Combines them as (urgent OR angry) AND NOT spam",
+        "Prints 'Priority' when the rule holds and 'Normal' otherwise",
+      ],
       hints: [
         "The condition has the shape: (urgent or angry) and not spam.",
         "Build the inner \"or\" first, then put it in the A slot of an \"and\" block, with a \"not\" block in the B slot.",
@@ -530,6 +572,11 @@ export const jevLessons: JevLesson[] = [
     ),
     challenge: {
       text: "Define a function \"is urgent\" with one parameter, text, that returns a Noul (true or false). Call it on two different messages and print both results with a label.",
+      requirements: [
+        "Defines a function with one parameter that asks a Noul (jev.noul) whether that parameter is urgent and returns the answer",
+        "Calls that function on two different messages",
+        "Prints both results, each with a label",
+      ],
       hints: [
         "Open Functions and use the \"to ... return\" block. Rename it, then use the gear to add a parameter named text.",
         "Put a Noul block in the return slot, asking \"Does the writer need something done urgently?\" about text.",
@@ -603,6 +650,11 @@ export const jevLessons: JevLesson[] = [
     ),
     challenge: {
       text: "Add a second counter, priority, that grows only when the category is billing and the urgency is above 1.5. Print both totals at the end.",
+      requirements: [
+        "Has a second counter, priority, set to 0 before the loop",
+        "Adds 1 to priority only when the category equals 'billing' AND the urgency is above 1.5",
+        "After the loop prints both the urgent total and the priority total",
+      ],
       hints: [
         "Add \"set priority to 0\" next to the urgent counter, before the loop.",
         "Inside the loop add an \"if\" whose condition is an \"and\": a text compare (category = billing) and a number compare (urgency > 1.5).",
