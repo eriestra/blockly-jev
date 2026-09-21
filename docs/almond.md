@@ -23,8 +23,8 @@ Common parts of every contract:
 | `jev_choice_N` (N = 2..6) | + `l1,d1..lN,dN` | `criteria: {option_k: {name: lk, meaning: dk}}` | `choice`, `confidence` |
 
 Input string limits: `state` 4096, `instructions` 2000, labels 200,
-descriptions and levels 500. Limits used by the demo: 20 per minute, 100 per
-day, 4 concurrent, 15 s timeout. Every block is one call, so a Run of the
+descriptions and levels 500. Limits used by the demo (Almond's backend quota tier): 60 per minute, 5000
+per day, 8 concurrent, 15 s timeout, per call key. Every block is one call, so a Run of the
 bundled example uses four.
 
 The page calls `POST https://almond.build/api/invoke/<site-slug>/<key>` with

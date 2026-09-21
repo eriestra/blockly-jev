@@ -1,0 +1,25 @@
+Es difícil entender los casos de aplicación de Jev.
+
+Todos leen que "juzga en vez de chatear" y que devuelve respuestas tipadas. Pocos saben qué harían con eso el lunes.
+
+Por eso desarrollé una versión basada en Blockly de Google para aprender a usar Jev. Sin código, sin API key, en el navegador.
+
+Los tres tipos de pregunta de Jev son bloques:
+
+Noul: "¿Es una queja?" → verdadero o falso, con probabilidad.
+Choice: "¿Qué equipo debe atender esto?" → una opción de tu lista.
+Score: "¿Qué tan urgente es?" → un número en la escala que tú defines.
+
+Y encajan en cualquier bloque normal: un if, un ciclo, un contador, una función.
+
+Diez lecciones, cada una con un caso real: detectar quejas, enrutar tickets, medir urgencia, identificar idioma, contar reseñas positivas, combinar tres juicios en una regla, y al final un pequeño asistente que lee mensajes y decide.
+
+Cada reto lo revisa el propio Jev contra los requisitos. Si lo logras: confeti.
+
+Cuando terminas, ya no te preguntas "para qué sirve Jev". Ya lo usaste diez veces.
+
+Es gratis. Link en el primer comentario.
+
+(La página corre en Almond, que guarda la API key y mide cada llamada. De eso hablo en otro post.)
+
+#Jev #TypeSafe #Blockly #AI #IA #AprenderAProgramar #NoCode #Agentes #Almond

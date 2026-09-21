@@ -1,0 +1,23 @@
+Jev is hard to place. Everyone reads that it "judges instead of chats" and returns typed answers. Few can say what they'd do with that on Monday.
+
+So I built a version on Google's Blockly to learn Jev by using it. No code, no API key, in the browser.
+
+Jev's three question types are blocks:
+
+Noul: "Is this a complaint?" → true or false, with a probability.
+Choice: "Which team should handle this?" → one option from your list.
+Score: "How urgent is it?" → a number on a scale you define.
+
+They snap into any ordinary block: an if, a loop, a counter, a function.
+
+Ten lessons, each around a real use case: spotting complaints, routing tickets, scoring urgency, detecting language, counting positive reviews, combining three judgments into one rule, and finally a small assistant that reads messages and decides.
+
+Jev itself checks every challenge against the requirements. Get it right: confetti.
+
+By the end you stop asking what Jev is for. You've used it ten times.
+
+It's free. Link in the first comment.
+
+(The page runs on Almond, which holds the API key and meters every call. That's another post.)
+
+#Jev #TypeSafe #Blockly #AI #LearnToCode #NoCode #AIAgents #Almond
