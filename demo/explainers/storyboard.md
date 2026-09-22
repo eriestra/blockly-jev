@@ -154,3 +154,14 @@ Juno (Higgsfield, ElevenLabs engine) remains the voice. Eight previously prepare
 takes are preserved; `hello` and `lists-loops` complete the set. Every lesson has
 captions, a transcript, playback controls, seeking, replay, mute, and expansion.
 Reduced motion presents the same meaningful states with spatial motion removed.
+
+## Corrected synchronization · 2026-09-21
+
+The pause/word-share approach above caused sentence changes up to 4.8 seconds
+late or early. It is superseded by `align.py`: acoustic CTC alignment of every
+script word to the exact delivered MP3, with word start/end times. Scene changes
+use the first spoken word of each sentence; highlights end when that word ends.
+Pinned alignment dependencies are in `requirements-align.txt`. An audio SHA-256
+in each track prevents reusing timing after replacing an audio asset. Narration
+files and playback speed are unchanged. Validate alignment against independent
+speech-to-text of sentence crops before publication.

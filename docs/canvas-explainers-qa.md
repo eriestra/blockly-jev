@@ -55,3 +55,20 @@ nonzero output (peak amplitude above 0.56 in the opening speech), advanced past
 two seconds, and passed pause, seek-to-12-seconds, resume and mute/unmute checks.
 No runtime exceptions. This checks the decoded output signal as well as the
 clock; the earlier media-element-only checks did not establish audible output.
+
+## Corrected caption and scene timing · 2026-09-21
+
+The earlier pause-based alignment was wrong by up to 4.78 seconds at sentence
+boundaries. Replaced it with Wav2Vec2 CTC forced alignment of the original script
+against each exact delivered MP3. Audio hashes match all ten hosted files.
+The alignment stores word starts and ends, and caption highlighting now uses
+both. A fresh run of the checked-in script reproduced the Variables timing.
+
+Independent validation: cropped all 71 sentences at the new boundaries and
+transcribed them with Whisper base.en. 70 exceeded 78% word-sequence agreement;
+the remaining Variables sentence differed only in number formatting (0.95 vs
+zero point nine five, etc.). Browser-output recording of Variables transcribed
+to the expected opening sentences. Instrumentation showed a single source at
+playbackRate 1 and 48 kHz, with no overlapping starts. Recording tests routed to
+a capture stream rather than the user's speakers. This does not measure the
+user's physical speaker output.

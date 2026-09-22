@@ -4,7 +4,7 @@ import { sceneMarkup, escape } from './explainer-scenes';
 import { icon } from './canvas-controls';
 import { Narration } from './narration';
 
-type Cue = { i:number; text:string; start:number; end:number; words:[string,number][] };
+type Cue = { i:number; text:string; start:number; end:number; words:[string,number][]; wordEnds:number[] };
 type Track = { total:number; cues:Cue[] };
 const tracks = cueData as unknown as Record<string,Track>;
 const timeLabel = (t:number) => `${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,'0')}`;
@@ -114,7 +114,7 @@ export function createExplainer(id:string,title:string) {
     let i=0;
     for(let k=0;k<track.cues.length;k++)if(t>=track.cues[k].start)i=k;
     const c=track.cues[i];
-    let word=-1; c.words?.forEach((w,k)=>{if(t>=w[1]&&t<=c.end)word=k;});
+    let word=-1; c.words?.forEach((w,k)=>{if(t>=w[1]&&t<c.wordEnds[k])word=k;});
     if(currentCue!==i||currentWord!==word) {
       caption.innerHTML=c.words?.length?c.words.map((w,k)=>k===word?`<mark>${escape(w[0])}</mark>`:escape(w[0])).join(' '):escape(c.text);
       svg.setAttribute('aria-label',`${title}. ${c.text}`);
