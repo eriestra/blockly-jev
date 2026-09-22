@@ -2,6 +2,7 @@ import { gsap } from 'gsap';
 import cueData from './explainers/cues.json';
 import { sceneMarkup, escape } from './explainer-scenes';
 import { icon } from './canvas-controls';
+import { Narration } from './narration';
 
 type Cue = { i:number; text:string; start:number; end:number; words:[string,number][] };
 type Track = { total:number; cues:Cue[] };
@@ -36,10 +37,8 @@ export function createExplainer(id:string,title:string) {
   const poster=q<HTMLElement>('.explainer-poster');
   const error=q<HTMLElement>('.explainer-error');
   const expand=q<HTMLButtonElement>('.expand-player');
-  const audio=new Audio(); audio.preload='metadata';
   // Publication substitutes this stable path with Almond's registered asset URL.
-  audio.src=`${import.meta.env.BASE_URL}media/${id}.mp3`;
-  audio.hidden=true;element.append(audio);
+  const audio=new Narration(`${import.meta.env.BASE_URL}media/${id}.mp3`,track.total);
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
   let timeline:gsap.core.Timeline;
   let currentCue=-1, currentWord=-2, raf=0, disposed=false, starting=false;
@@ -129,13 +128,12 @@ export function createExplainer(id:string,title:string) {
     if(disposed||starting)return;
     starting=true;play.disabled=true;error.hidden=true;
     try {
-      await document.fonts.ready;
       if(audio.ended||audio.currentTime>=track.total-.1)audio.currentTime=0;
       await audio.play();
       if(disposed){audio.pause();return;}
       poster.hidden=true;paintPlay();cancelAnimationFrame(raf);tick();
-    } catch {
-      if(!disposed){error.textContent='Narration could not play. Press play to retry, or read the transcript.';error.hidden=false;}
+    } catch (cause) {
+      if(!disposed && !(cause instanceof DOMException && cause.name==='AbortError')){error.textContent='Narration could not play. Press play to retry, or read the transcript.';error.hidden=false;}
     } finally {starting=false;play.disabled=false;}
   };
   const toggle=()=>audio.paused?void start():pause();
@@ -155,6 +153,7 @@ export function createExplainer(id:string,title:string) {
   audio.addEventListener('error',()=>{pause();error.textContent='Narration is unavailable. Retry playback or read the transcript.';error.hidden=false;});
   audio.addEventListener('waiting',()=>{play.setAttribute('aria-label','Narration loading');});
   audio.addEventListener('playing',paintPlay);
+  audio.addEventListener('pause',()=>{cancelAnimationFrame(raf);paintPlay();render();});
   element.addEventListener('keydown',(e)=>{
     if((e.target as HTMLElement).matches('input,button,summary'))return;
     if(e.code==='Space'){e.preventDefault();toggle();}
@@ -184,6 +183,6 @@ export function createExplainer(id:string,title:string) {
   return {element,dispose(){
     disposed=true;pause();timeline.kill();visibility.disconnect();
     document.removeEventListener('visibilitychange',onVisibility);reduced.removeEventListener('change',onMotion);
-    audio.removeAttribute('src');audio.load();if(dialog)restore();
+    audio.dispose();if(dialog)restore();
   }};
 }

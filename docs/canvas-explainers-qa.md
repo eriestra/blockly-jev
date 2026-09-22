@@ -30,3 +30,28 @@ and bounded by the measured track duration. No speech speed change or MP4 export
 Additional hosted checks passed: a real Hello-world run printed `Hello, world!`
 and `true`; pause/resume, mute, caption toggling, and Escape from the expanded
 player work. Production activated at https://sites.almond.build/blockly-jev/.
+
+## Narration playback repair · 2026-09-21
+
+Reproduced through Fastloop on the user's Chrome 152: the MP3 loaded with
+readyState 4, volume 1 and muted false, but the media element paused around
+0.02 seconds without an application pause call. The playback button still
+showed Pause. The exact browser/device cause of that unsolicited pause was
+not established. The same MP3 decoded through Web Audio produced a nonzero
+output signal and an advancing audio clock on that browser.
+
+The player now decodes each short track once per lesson and plays it through
+Web Audio. Context resume happens in the click handler before any asynchronous
+loading; captions and animation use the output clock. Pause, seek, mute, replay,
+and disposal preserve a single source, and a cancelled load cannot start a
+previous lesson. Audio interruptions also update the playback button.
+
+Strict demo type checking and the production build pass. All 50 automated
+tests pass; ten opt-in Jev live tests remain skipped. Four new regression tests
+cover clock/seek behavior, mute/end/replay, cancellation, and download retry.
+
+Hosted preview acceptance through Fastloop: all ten lessons produced measured
+nonzero output (peak amplitude above 0.56 in the opening speech), advanced past
+two seconds, and passed pause, seek-to-12-seconds, resume and mute/unmute checks.
+No runtime exceptions. This checks the decoded output signal as well as the
+clock; the earlier media-element-only checks did not establish audible output.
