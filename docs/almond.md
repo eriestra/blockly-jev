@@ -60,3 +60,22 @@ Blockly's standard sound and sprite assets are also hosted on the site so its
 sound loader respects Almond's CSP. These files come from Blockly 13.3.0 and
 retain Blockly's Apache-2.0 license. No credentials or live judgment results are
 embedded in the explainers.
+
+## Intermittent browser request failures · 2026-09-21
+
+An intermittent missing CORS response header was reproduced in Chrome on a
+public `jev_noul` call, with successful responses immediately before and after;
+the user also observed a `jev_score_3` preflight failure. The origin and public
+contract configuration were valid. Platform report: `mn758ae3svm4dnxpa8cfdeb9618exb4r`.
+
+The page adapter now retries a failed judgment up to twice, after 350 ms and
+1 s, for browser network failures or HTTP 502/503/504. This is appropriate only
+because these contracts compute read-only judgments. It never reruns a whole
+program or retries validation, authorization, or rate-limit responses. This is
+a page-side mitigation; it does not establish that the upstream header omission
+has been repaired. An exhausted retry reports a useful connection error.
+
+The explainer alignment description above is superseded by `align.py` and
+`requirements-align.txt`: delivered MP3s stay unchanged and acoustic CTC
+alignment provides word starts/ends. Playback now uses a decoded Web Audio
+buffer and its clock. See `canvas-explainers-qa.md` for the measured verification.

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { afterEach, describe, it, expect, vi } from 'vitest';
 import { jevFromAlmond } from '../src/runtime/almond';
 
 function fakeFetch(handler: (key: string, input: any) => any) {
@@ -10,6 +10,7 @@ function fakeFetch(handler: (key: string, input: any) => any) {
 }
 
 describe('jevFromAlmond', () => {
+  afterEach(() => vi.useRealTimers());
   it('routes a plain noul and a described noul to different contracts', async () => {
     const fetch = fakeFetch((key) => ({ noul: key === 'jev_noul' ? 0.2 : 0.8 }));
     const jev = jevFromAlmond({ siteSlug: 's', fetch: fetch as any });
@@ -43,5 +44,41 @@ describe('jevFromAlmond', () => {
     const fetch = vi.fn(async () => new Response(JSON.stringify({ error: 'protected_call_rate_limited' }), { status: 429, headers: { 'retry-after': '3' } }));
     const jev = jevFromAlmond({ siteSlug: 's', fetch: fetch as any });
     await expect(jev.noul('x', 'q')).rejects.toThrow(/rate_limited.*3s/);
+    expect(fetch).toHaveBeenCalledOnce();
+  });
+
+  it('recovers from a transient browser fetch failure without repeating successful calls', async () => {
+    vi.useFakeTimers();
+    const fetch = fakeFetch(() => ({ noul: 0.8 }));
+    fetch.mockRejectedValueOnce(new TypeError('Failed to fetch'));
+    const jev = jevFromAlmond({ siteSlug: 's', fetch: fetch as any });
+    const pending = jev.noul('x', 'q');
+    await vi.runAllTimersAsync();
+    expect((await pending).noul).toBe(0.8);
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(fetch.mock.calls[0]).toEqual(fetch.mock.calls[1]);
+    await jev.noul('another', 'question');
+    expect(fetch).toHaveBeenCalledTimes(3);
+  });
+
+  it('stops after three network failures and gives a useful error', async () => {
+    vi.useFakeTimers();
+    const fetch = vi.fn().mockRejectedValue(new TypeError('Failed to fetch'));
+    const jev = jevFromAlmond({ siteSlug: 's', fetch });
+    const pending = expect(jev.noul('x', 'q')).rejects.toThrow('Could not reach Jev after three attempts');
+    await vi.runAllTimersAsync();
+    await pending;
+    expect(fetch).toHaveBeenCalledTimes(3);
+  });
+
+  it('recovers from a gateway failure', async () => {
+    vi.useFakeTimers();
+    const fetch = fakeFetch(() => ({ score: 1.5, confidence: 0.8 }));
+    fetch.mockResolvedValueOnce(new Response('Unavailable', { status: 502 }));
+    const jev = jevFromAlmond({ siteSlug: 's', fetch: fetch as any });
+    const pending = jev.score('x', 'q', ['low', 'medium', 'high']);
+    await vi.runAllTimersAsync();
+    expect((await pending).score).toBe(1.5);
+    expect(fetch).toHaveBeenCalledTimes(2);
   });
 });

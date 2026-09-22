@@ -42,11 +42,28 @@ export function jevFromAlmond(options: AlmondOptions = {}): JevRuntime {
   const doFetch = options.fetch ?? ((input, init) => globalThis.fetch(input, init));
 
   async function invoke(key: string, input: Record<string, string | number | boolean>): Promise<any> {
-    const res = await doFetch(`${origin}/api/invoke/${slug}/${key}`, {
+    const url = `${origin}/api/invoke/${slug}/${key}`;
+    const request: RequestInit = {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ input }),
-    });
+    };
+    let res!: Response;
+    // These contracts only compute judgments. Retry the failed judgment, never
+    // the whole program (which could print duplicate output or repeat other work).
+    const delays = [350, 1000];
+    for (let attempt = 0; ; attempt++) {
+      try {
+        res = await doFetch(url, request);
+        if (![502, 503, 504].includes(res.status) || attempt === delays.length) break;
+      } catch (cause) {
+        if (!(cause instanceof TypeError)) throw cause;
+        if (attempt === delays.length) {
+          throw new Error('Could not reach Jev after three attempts. Please try Run again in a moment.', { cause });
+        }
+      }
+      await new Promise(resolve => setTimeout(resolve, delays[attempt]));
+    }
     const body = await res.json().catch(() => ({}));
     if (!res.ok || !body.ok) {
       const retry = res.headers.get('retry-after');
