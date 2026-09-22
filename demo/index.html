@@ -138,7 +138,6 @@
       Made with Almond
     </a>
     <button id="reset" class="btn ghost">Reset lesson</button>
-    <button id="run" class="btn primary">Run</button>
   </header>
   <div class="rail-wrap">
     <button id="prev" class="btn icon" aria-label="Previous lesson">‹</button>
@@ -154,8 +153,14 @@
     </aside>
     <section class="workspace-column" aria-label="Programming workspace">
       <div class="canvas">
+        <div class="canvas-toolbar">
+          <h2>Program</h2>
+          <div class="canvas-actions">
+            <button id="toggle-code" class="canvas-button code-toggle" aria-label="Show generated JavaScript" title="Show generated JavaScript" aria-expanded="false" aria-controls="code-panel" type="button"></button>
+            <button id="run" class="btn primary" type="button">Run</button>
+          </div>
+        </div>
         <div id="blockly"></div>
-        <button id="toggle-code" class="canvas-button code-toggle" aria-label="Show generated JavaScript" title="Show generated JavaScript" aria-expanded="false" aria-controls="code-panel" type="button"></button>
         <section id="code-panel" aria-labelledby="code-title" hidden>
           <div class="panel-heading"><h2 id="code-title">Generated JavaScript</h2><button id="close-code" class="canvas-button" aria-label="Close JavaScript" type="button"></button></div>
           <pre id="code" tabindex="0"></pre>
