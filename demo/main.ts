@@ -1,6 +1,9 @@
 import * as Blockly from 'blockly';
 import { javascriptGenerator } from 'blockly/javascript';
 import { confetti } from './confetti';
+import { installCompactTrashcan, mountCanvasControls } from './canvas-controls';
+import { createExplainer } from './explainer-player';
+import './workspace.css';
 import {
   almondTheme,
   checkChallenge,
@@ -40,14 +43,19 @@ const toolbox = {
   ],
 };
 
+installCompactTrashcan();
 const workspace = Blockly.inject('blockly', {
   toolbox,
+  media: `${import.meta.env.BASE_URL}blockly-media/`,
   theme: almondTheme,
   trashcan: true,
-  zoom: { controls: true, wheel: false, startScale: 1 },
+  zoom: { controls: false, wheel: false, startScale: 1, minScale: 0.25, maxScale: 2 },
   grid: { spacing: 24, length: 2, colour: '#e6e0d5', snap: false },
   move: { scrollbars: true, drag: true, wheel: true },
 });
+
+mountCanvasControls(workspace);
+let disposeExplainer: (() => void) | undefined;
 
 // Print into the output panel instead of window.alert.
 javascriptGenerator.forBlock['text_print'] = function (block, gen) {
@@ -105,6 +113,8 @@ function paintRail() {
     dot.textContent = isDone ? '✓' : String(i + 1);
     step.setAttribute('aria-current', id === currentId ? 'step' : 'false');
   });
+  const active = railEl.querySelector<HTMLElement>('.active');
+  if (active) railEl.scrollLeft = Math.max(0, active.offsetLeft - railEl.clientWidth / 2 + active.offsetWidth / 2);
   const idx = jevLessons.findIndex((l) => l.id === currentId);
   $<HTMLButtonElement>('prev').disabled = idx <= 0;
   $<HTMLButtonElement>('next').disabled = idx >= jevLessons.length - 1;
@@ -135,7 +145,7 @@ function el(tag: string, className: string, text: string) {
 
 function loadWorkspace(ws: Record<string, unknown>, callsLabel: string) {
   Blockly.serialization.workspaces.load(ws as any, workspace);
-  workspace.scrollCenter();
+  requestAnimationFrame(() => workspace.zoomToFit());
   callsEl.textContent = callsLabel;
   setOutput([], 'idle');
   regenerate();
@@ -148,6 +158,7 @@ function loadLesson(id: string) {
   lastOutput = [];
   loadWorkspace(lesson.workspace, `${lesson.calls} Jev call${lesson.calls === 1 ? '' : 's'} per run`);
   eyebrowEl.textContent = `Lesson ${n} of ${jevLessons.length}`;
+  disposeExplainer?.();
   lessonText.innerHTML = '';
   const h = document.createElement('h3'); h.textContent = shortTitle(lesson.title);
   const lead = el('p', 'lead', lesson.concept);
@@ -208,7 +219,9 @@ function loadLesson(id: string) {
   actions.append(checkBtn, hintBtn, solBtn);
   ch.append(chHead, hintList, actions, verdictEl);
 
-  lessonText.append(h, lead, ...theory, jevP, ch);
+  const explainer = createExplainer(lesson.id, shortTitle(lesson.title));
+  disposeExplainer = explainer.dispose;
+  lessonText.append(h, lead, ...theory, jevP, explainer.element, ch);
   try { localStorage.setItem('jev-lesson', lesson.id); } catch {}
   if (location.hash.slice(1) !== lesson.id) history.replaceState(null, '', `#${lesson.id}`);
   paintRail();
@@ -235,7 +248,7 @@ window.addEventListener('hashchange', () => {
 });
 
 // ---- run ----
-const jev = import.meta.env.VITE_JEV_RUNTIME === 'almond' ? jevFromAlmond() : jevFromProxy();
+const jev = import.meta.env.VITE_JEV_RUNTIME === 'almond' ? jevFromAlmond({ siteSlug: 'blockly-jev' }) : jevFromProxy();
 
 runBtn.addEventListener('click', async () => {
   const lines: string[] = [];

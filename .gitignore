@@ -6,3 +6,5 @@ demo-dist/
 !.env.example
 .DS_Store
 demo-dist-almond/
+
+/node_modules

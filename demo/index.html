@@ -6,6 +6,7 @@
   <title>Blockly + Jev</title>
   <meta name="description" content="Learn to code with blocks that can judge: ten lessons using TypeSafe Jev inside Blockly." />
   <style>
+    [hidden] { display: none !important; }
     :root {
       --bone: #f5f2ec; --paper: #fbf9f5; --ink: #17130f; --body: #4a433c; --muted: #8a8178; --rule: #ddd7cc;
       --mark: #b5622d; --shell: #c8873c; --verified: #2e7d5b; --violet: #7557c7;
@@ -70,9 +71,10 @@
 
     /* ---- main ---- */
     main { flex: 1; min-height: 0; display: grid; grid-template-columns: 420px minmax(0, 1fr); gap: 18px; padding: 0 24px 20px; }
-    .canvas { border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--rule); background: var(--paper); min-width: 0; min-height: 0; }
+    .canvas { position: relative; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--rule); background: var(--paper); min-width: 0; min-height: 0; }
     #blockly { width: 100%; height: 100%; }
-    aside { display: grid; grid-template-rows: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr); gap: 14px; min-height: 0; }
+    aside { display: flex; min-height: 0; }
+    aside > .card { width: 100%; }
     .card { background: var(--paper); border: 1px solid var(--rule); border-radius: var(--radius); box-shadow: var(--shadow); display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
     .card > :last-child { flex: 1; min-height: 0; overflow: auto; }
     .card-head { display: flex; align-items: center; gap: 10px; padding: 12px 16px 0; }
@@ -115,9 +117,10 @@
       .rail-wrap { padding: 4px 16px 12px; }
       .rail { grid-template-columns: repeat(10, minmax(72px, 1fr)); }
       main { grid-template-columns: 1fr; padding: 0 16px 16px; }
-      .canvas { height: 62vh; order: -1; }
+      .workspace-column { min-height: 540px; }
+      .canvas { min-height: 400px; }
       aside { grid-template-rows: auto auto auto; }
-      .card > :last-child { max-height: 45vh; }
+      .card > :last-child { max-height: none; }
     }
   </style>
   <script type="module" src="./main.ts"></script>
@@ -148,16 +151,26 @@
         <div class="card-head"><span class="eyebrow" id="lesson-eyebrow">Lesson</span><span class="pill" id="calls"></span></div>
         <div id="lesson-text"></div>
       </section>
-      <section class="card">
-        <div class="card-head"><span class="eyebrow">Generated JavaScript</span></div>
-        <pre id="code"></pre>
-      </section>
-      <section class="card">
-        <div class="card-head"><span class="eyebrow">Output</span><span class="pill green" id="status" hidden></span></div>
-        <pre id="output"></pre>
-      </section>
     </aside>
-    <div class="canvas"><div id="blockly"></div></div>
+    <section class="workspace-column" aria-label="Programming workspace">
+      <div class="canvas">
+        <div id="blockly"></div>
+        <button id="toggle-code" class="canvas-button code-toggle" aria-label="Show generated JavaScript" title="Show generated JavaScript" aria-expanded="false" aria-controls="code-panel" type="button"></button>
+        <section id="code-panel" aria-labelledby="code-title" hidden>
+          <div class="panel-heading"><h2 id="code-title">Generated JavaScript</h2><button id="close-code" class="canvas-button" aria-label="Close JavaScript" type="button"></button></div>
+          <pre id="code" tabindex="0"></pre>
+        </section>
+        <div class="canvas-tools" role="group" aria-label="Canvas controls">
+          <button id="fit-blocks" class="canvas-button" aria-label="Fit blocks" title="Fit blocks" type="button"></button>
+          <button id="zoom-in" class="canvas-button" aria-label="Zoom in" title="Zoom in" type="button"></button>
+          <button id="zoom-out" class="canvas-button" aria-label="Zoom out" title="Zoom out" type="button"></button>
+        </div>
+      </div>
+      <section class="output-panel" aria-labelledby="output-title">
+        <div class="panel-heading"><h2 id="output-title">Output</h2><span class="pill green" id="status" hidden></span></div>
+        <pre id="output" aria-live="polite" aria-atomic="true" tabindex="0"></pre>
+      </section>
+    </section>
   </main>
   <dialog id="how-dialog" aria-labelledby="how-title">
     <div class="dlg">
