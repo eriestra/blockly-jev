@@ -28,7 +28,9 @@
     "build:demo:almond": "VITE_JEV_RUNTIME=almond vite build --outDir ../demo-dist-almond",
     "test": "vitest run",
     "test:live": "JEV_LIVE=1 vitest run test/live-validate.test.ts",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build:bit": "node demo/bit/build-geometry.mjs && esbuild demo/bit/main.js --bundle --minify --format=iife --outfile=demo/bit/app.js",
+    "test:bit": "node demo/bit/check-geometry.mjs && node demo/bit/check-question.mjs"
   },
   "keywords": [
     "blockly",
@@ -50,12 +52,17 @@
     "blockly": "^13.3.0",
     "canvas-confetti": "^1.9.4",
     "concurrently": "^9.1.2",
+    "esbuild": "^0.28.2",
     "jsdom": "^27.4.0",
+    "three": "^0.186.0",
     "typescript": "^5.9.0",
     "vite": "^7.1.0",
     "vitest": "^3.2.0"
   },
   "dependencies": {
     "gsap": "^3.15.0"
+  },
+  "engines": {
+    "node": ">=22.12.0"
   }
 }

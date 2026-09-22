@@ -79,3 +79,54 @@ The explainer alignment description above is superseded by `align.py` and
 `requirements-align.txt`: delivered MP3s stay unchanged and acoustic CTC
 alignment provides word starts/ends. Playback now uses a decoded Web Audio
 buffer and its clock. See `canvas-explainers-qa.md` for the measured verification.
+
+## Floating Bit widget · 2026-09-22
+
+The live page includes `demo/bit/widget.js`, imported by `demo/main.ts` and bundled
+by the normal Vite build. It uses the same Jev runtime as the lesson: Almond
+protected calls on the hosted page and the local server proxy during development.
+The closed widget is only a floating alpha Three.js polyhedron. Opening it shows
+a compact input and arrow send button; answers appear only after interaction.
+The shape toggles the panel, and Escape closes it and restores keyboard focus.
+There is no sound toggle, title, topic description, or permanent helper copy.
+
+Two parallel calls to the existing `jev_noul` contract check topic relevance
+and judge questions or true/false statements, tolerating spelling mistakes. Its context is authored lesson prose plus the
+basic programming knowledge needed to interpret the examples. It does not read
+workspace edits, hidden solutions, browser storage, or other form fields.
+Relevance below 0.65 stays neutral. Answer probability at least 0.60 produces
+Yes; at most 0.40 produces No; the uncertain middle stays neutral. Requests time out after 25 seconds and let the learner retry.
+
+The checker dispatches `bit:unlock` on its user gesture, then `bit:exercise` with
+`{lessonId, passed}` only after an actual judgment succeeds. Network errors never
+become a failed-exercise response. `bit:reset` invalidates prior lesson responses.
+Bit does not change the checker’s requirements, verdict, or saved progress.
+Original voice clips are immutable assets on `bit-live`; their source is recorded
+in `demo/bit/PRODUCT.md`. The standalone player lives in the same folder.
+
+The motion-graphics explainer is first in the lesson panel, before the written
+concept and challenge. Its existing playback and caption controls are preserved.
+
+### Reproducible publication
+
+Use Node 22.12 or newer. The release script builds with the exact immutable
+Almond asset base, uploads every required asset, and creates a private preview.
+No edits to minified JavaScript or separate widget injection are needed.
+
+```sh
+npm ci
+npm run typecheck
+npm test
+npm run test:bit
+node scripts/publish-almond.mjs prepare bit-widget-v6
+# Verify the returned preview, then activate that exact revision:
+node scripts/publish-almond.mjs activate bit-widget-v6
+```
+
+Each release name must be new because asset paths are immutable. Set
+`ALMOND_SITE_CONFIG` to a private JSON file containing production `endpoint`,
+`siteId`, and `writeToken`; the default is
+`~/.almond-private/blockly-jev-site.json`. Receipts and preview tokens stay beside
+that private file, outside the repository. Activation guards against overwriting
+a page updated since the preview was prepared. Verify the public URL afterward.
+See `docs/bit-widget-qa.md` for acceptance evidence and Fastloop test setup.

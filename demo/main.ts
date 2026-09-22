@@ -1,3 +1,4 @@
+import { mountBitWidget } from './bit/widget.js';
 import * as Blockly from 'blockly';
 import { javascriptGenerator } from 'blockly/javascript';
 import { confetti } from './confetti';
@@ -154,6 +155,7 @@ function loadWorkspace(ws: Record<string, unknown>, callsLabel: string) {
 function loadLesson(id: string) {
   const lesson = jevLessons.find((l) => l.id === id) ?? jevLessons[0];
   currentId = lesson.id;
+  window.dispatchEvent(new Event('bit:reset'));
   const n = jevLessons.indexOf(lesson) + 1;
   lastOutput = [];
   loadWorkspace(lesson.workspace, `${lesson.calls} Jev call${lesson.calls === 1 ? '' : 's'} per run`);
@@ -190,6 +192,7 @@ function loadLesson(id: string) {
   checkBtn.title = `${lesson.challenge.requirements.length} Jev calls`;
   const verdictEl = document.createElement('p'); verdictEl.className = 'verdict'; verdictEl.hidden = true;
   checkBtn.addEventListener('click', async () => {
+    window.dispatchEvent(new Event('bit:unlock'));
     checkBtn.disabled = true; checkBtn.textContent = 'Checking…';
     verdictEl.hidden = true;
     try {
@@ -199,6 +202,7 @@ function loadLesson(id: string) {
       const reference = javascriptGenerator.workspaceToCode(scratch);
       scratch.dispose();
       const result = await checkChallenge(jev, lesson, learner, lastOutput, reference);
+      window.dispatchEvent(new CustomEvent('bit:exercise', { detail: { lessonId: lesson.id, passed: result.passed } }));
       verdictEl.textContent = result.message;
       verdictEl.title = result.results.map((r) => `${r.passed ? '✓' : '✗'} ${r.requirement} (${r.probability.toFixed(2)})`).join('\n');
       verdictEl.className = 'verdict ' + (result.passed ? 'pass' : 'fail');
@@ -221,7 +225,7 @@ function loadLesson(id: string) {
 
   const explainer = createExplainer(lesson.id, shortTitle(lesson.title));
   disposeExplainer = explainer.dispose;
-  lessonText.append(h, lead, ...theory, jevP, explainer.element, ch);
+  lessonText.append(explainer.element, h, lead, ...theory, jevP, ch);
   try { localStorage.setItem('jev-lesson', lesson.id); } catch {}
   if (location.hash.slice(1) !== lesson.id) history.replaceState(null, '', `#${lesson.id}`);
   paintRail();
@@ -249,6 +253,7 @@ window.addEventListener('hashchange', () => {
 
 // ---- run ----
 const jev = import.meta.env.VITE_JEV_RUNTIME === 'almond' ? jevFromAlmond({ siteSlug: 'blockly-jev' }) : jevFromProxy();
+mountBitWidget(jev);
 
 runBtn.addEventListener('click', async () => {
   const lines: string[] = [];

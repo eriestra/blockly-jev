@@ -8,3 +8,7 @@ demo-dist/
 demo-dist-almond/
 
 /node_modules
+
+# Standalone Bit build and local review evidence
+demo/bit/app.js
+demo/bit/.impeccable/review/

@@ -1,0 +1,38 @@
+{
+  "provider": "Almond",
+  "url": "https://sites.almond.build/bit-live/",
+  "siteId": "k578m06c6bx3amkkpbme1xgy7d8ewthd",
+  "page": "index",
+  "asset": "https://sites.almond.build/a/bit-live/js/bit-three-v4.js",
+  "verified": "2026-09-22",
+  "checks": [
+    "preview and live load",
+    "yes/no buttons",
+    "original audio playback",
+    "keyboard shortcuts",
+    "rapid switching",
+    "automatic neutral return",
+    "390px mobile",
+    "1280px desktop",
+    "geometry planar faces",
+    "no browser console errors"
+  ],
+  "widget": {
+    "url": "https://sites.almond.build/blockly-jev/#hello",
+    "release": "bit-widget-v6",
+    "revision": "fd7a94ff81a017d6f7567d6ff76457e1a5bd40cbab43eadb4d90546d6485bb2a",
+    "script": "https://sites.almond.build/a/blockly-jev/releases/bit-widget-v6/demo.js",
+    "verified": "2026-09-22",
+    "checks": [
+      "exact misspelled statement returns Yes",
+      "false print statement returns No",
+      "off-topic input remains neutral",
+      "explainer first",
+      "compact input/send/answer",
+      "Escape and focus return",
+      "desktop and mobile transparency",
+      "no runtime exceptions",
+      "normal viewport restored"
+    ]
+  }
+}

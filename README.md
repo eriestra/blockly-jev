@@ -26,6 +26,17 @@ standard mutator gear so cases can be reordered.
 [Almond](https://almond.build), which hosts the page, holds the TypeSafe key,
 and meters the Jev calls. No server was written for it.
 
+The lesson panel starts with its narrated motion-graphics explainer. A floating
+Three.js Bit answers topic-related questions or checks statements, then reacts
+with the original Yes/No voice when an exercise passes or fails. Click Bit to
+open its compact input; click again or press Escape to close it.
+
+Widget source, product context, and design specification live in `demo/bit/`.
+It is included automatically in `npm run build:demo` and `build:demo:almond`.
+Run `npm run test:bit` for geometry and judgment checks, or `npm run build:bit`
+for the standalone player. Deployment instructions are in
+[docs/almond.md](docs/almond.md).
+
 ## Install
 
 ```sh

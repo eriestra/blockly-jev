@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-22T03:16:58.243972+00:00",
+  "title": "Design System: Bit — Live 3D",
+  "extensions": {
+    "motion": [
+      {
+        "name": "neutral-cycle",
+        "value": "1.7453s",
+        "purpose": "Full neutral morph cycle, approximately 1.75 seconds."
+      },
+      {
+        "name": "response-morph",
+        "value": "0.30s",
+        "purpose": "Morph toward Yes or No."
+      },
+      {
+        "name": "return-delay",
+        "value": "1.45s",
+        "purpose": "Elapsed from activation before return begins."
+      },
+      {
+        "name": "return-morph",
+        "value": "0.62s",
+        "purpose": "Morph back to neutral."
+      },
+      {
+        "name": "reduced-morph",
+        "value": "0.16s",
+        "purpose": "Response and return with reduced motion; idle remains still."
+      },
+      {
+        "name": "control-transition",
+        "value": "0.15s",
+        "purpose": "Button background, border, and press movement."
+      },
+      {
+        "name": "morph-easing",
+        "value": "q*q*q*(q*(q*6-15)+10)",
+        "purpose": "Quintic smoothstep."
+      },
+      {
+        "name": "widget-return-delay",
+        "value": "1.70s",
+        "purpose": "Embedded widget delay from response activation before return begins; standalone stays at 1.45s."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact",
+        "value": "520px"
+      },
+      {
+        "name": "widget-compact",
+        "value": "600px"
+      }
+    ],
+    "shadows": [
+      {
+        "name": "widget-panel",
+        "value": "0 12px 36px #17130f2e",
+        "purpose": "Separate the question panel from the host lesson; the artifact has no background or halo."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Yes",
+      "kind": "button",
+      "refersTo": "button-yes",
+      "description": "Equal-width response control; accent wash indicates hover or pressed state.",
+      "html": "<button class=\"ds-choice ds-yes\" aria-pressed=\"false\"><svg viewBox=\"0 0 28 28\" aria-hidden=\"true\"><path d=\"M14 2 25 14 14 26 3 14Z M3 14h22 M14 2v24\"/></svg>Yes</button>",
+      "css": ".ds-choice{min-height:76px;display:flex;align-items:center;justify-content:center;gap:18px;border:1px solid var(--line,#273849);border-radius:4px;background:transparent;font:600 22px/1 \"Avenir Next\",Avenir,\"Segoe UI\",sans-serif;letter-spacing:.02em;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}.ds-choice svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.5}.ds-choice:active{transform:translateY(1px)}.ds-choice:focus-visible{outline:2px solid var(--ink,#eff5fc);outline-offset:5px}.ds-choice:disabled{opacity:.35;cursor:wait}@media(max-width:520px){.ds-choice{min-height:68px}}@media(prefers-reduced-motion:reduce){.ds-choice{transition:none}}.ds-yes{color:var(--yes,#ffd24c)}.ds-yes:hover,.ds-yes[aria-pressed=true]{background:#ffd24c12;border-color:var(--yes,#ffd24c)}"
+    },
+    {
+      "name": "No",
+      "kind": "button",
+      "refersTo": "button-no",
+      "description": "Equal-width response control; accent wash indicates hover or pressed state.",
+      "html": "<button class=\"ds-choice ds-no\" aria-pressed=\"false\"><svg viewBox=\"0 0 28 28\" aria-hidden=\"true\"><path d=\"m14 1 3 8 8-5-5 9 7 4-10 1-3 9-3-9-10-1 7-4-5-9 8 5Z\"/></svg>No</button>",
+      "css": ".ds-choice{min-height:76px;display:flex;align-items:center;justify-content:center;gap:18px;border:1px solid var(--line,#273849);border-radius:4px;background:transparent;font:600 22px/1 \"Avenir Next\",Avenir,\"Segoe UI\",sans-serif;letter-spacing:.02em;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}.ds-choice svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.5}.ds-choice:active{transform:translateY(1px)}.ds-choice:focus-visible{outline:2px solid var(--ink,#eff5fc);outline-offset:5px}.ds-choice:disabled{opacity:.35;cursor:wait}@media(max-width:520px){.ds-choice{min-height:68px}}@media(prefers-reduced-motion:reduce){.ds-choice{transition:none}}.ds-no{color:var(--no,#ff7964)}.ds-no:hover,.ds-no[aria-pressed=true]{background:#ff796412;border-color:var(--no,#ff7964)}"
+    },
+    {
+      "name": "Widget panel",
+      "kind": "custom",
+      "refersTo": "widget-panel",
+      "description": "Compact input and arrow send row. Two parallel Jev noul judgments require eligibility ≥0.65; answer probability ≥0.60 shows Yes, ≤0.40 shows No, otherwise neutral unknown. Shared timeout: 25 seconds.",
+      "html": "<section class=\"ds-widget-panel\" aria-label=\"Ask Bit\"><form novalidate><input class=\"ds-widget-input\" aria-label=\"A question or statement about this lesson\" maxlength=\"400\" autocomplete=\"off\" placeholder=\"Ask or check a statement…\" aria-describedby=\"ds-bit-answer\"><button class=\"ds-widget-ask\" type=\"submit\" aria-label=\"Ask Bit\" title=\"Ask Bit\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\"/></svg></button></form><p class=\"ds-widget-answer\" id=\"ds-bit-answer\" role=\"status\" aria-live=\"polite\" hidden></p></section>",
+      "css": ".ds-widget-panel{font:14px/1.5 Inter,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;box-sizing:border-box;width:min(340px,calc(100vw - 32px));padding:10px;background:#fbf9f5;color:#29231e;border-radius:12px;box-shadow:0 12px 36px #17130f2e;max-height:calc(100dvh - 155px);overflow:auto;scrollbar-color:#b7aca0 #fbf9f5}.ds-widget-panel form{display:flex;gap:8px;align-items:center}.ds-widget-answer{margin:8px 8px 2px;font-size:13px;line-height:1.5;color:#29231e}.ds-widget-answer[data-answer=yes]{color:#236445}.ds-widget-answer[data-answer=no]{color:#a13022}.ds-widget-panel [hidden]{display:none!important}.ds-widget-input{font:14px/1.5 Inter,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;box-sizing:border-box;width:100%;min-width:0;border:0;border-radius:6px;background:transparent;color:#29231e;padding:10px 8px;caret-color:#7557c7;font-size:16px;line-height:24px}.ds-widget-input::placeholder{color:#766b61}.ds-widget-input:focus-visible{outline:2px solid #7557c7;outline-offset:2px}.ds-widget-ask{font:14px/1.5 Inter,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;flex:none;display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:8px;background:#7557c7;color:white;cursor:pointer}.ds-widget-ask svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.ds-widget-ask:disabled{opacity:.6;cursor:wait}.ds-widget-ask:focus-visible{outline:2px solid #7557c7;outline-offset:2px}"
+    },
+    {
+      "name": "Widget question or statement",
+      "kind": "input",
+      "refersTo": "widget-input",
+      "description": "Accessible, borderless input for a question or statement, maximum 400 characters.",
+      "html": "<input class=\"ds-widget-input\" aria-label=\"A question or statement about this lesson\" maxlength=\"400\" autocomplete=\"off\" placeholder=\"Ask or check a statement…\">",
+      "css": ".ds-widget-input{font:14px/1.5 Inter,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;box-sizing:border-box;width:100%;min-width:0;border:0;border-radius:6px;background:transparent;color:#29231e;padding:10px 8px;caret-color:#7557c7;font-size:16px;line-height:24px}.ds-widget-input::placeholder{color:#766b61}.ds-widget-input:focus-visible{outline:2px solid #7557c7;outline-offset:2px}"
+    },
+    {
+      "name": "Widget arrow send",
+      "kind": "button",
+      "refersTo": "widget-ask",
+      "description": "44px arrow submit control; disabled while a judgment is pending.",
+      "html": "<button class=\"ds-widget-ask\" type=\"submit\" aria-label=\"Ask Bit\" title=\"Ask Bit\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\"/></svg></button>",
+      "css": ".ds-widget-ask{font:14px/1.5 Inter,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;flex:none;display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:8px;background:#7557c7;color:white;cursor:pointer}.ds-widget-ask svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.ds-widget-ask:disabled{opacity:.6;cursor:wait}.ds-widget-ask:focus-visible{outline:2px solid #7557c7;outline-offset:2px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "TRON Bit",
+    "overview": "The approved TRON reference owns the visual world. A luminous, faceted artifact occupies generous dark space; compact controls and quiet text support it. Preserve this existing direction when extending the player.\n\nThe embedded lesson widget is an intentional second surface: the same geometric artifact floats without a background or halo, while its question panel adopts the host’s paper, violet, typography, and rounded controls. Full-page tokens remain authoritative for the standalone player; widget-prefixed tokens apply only to the embedded panel.",
+    "keyCharacteristics": [
+      "Dark, sparse composition.",
+      "Clean planar geometry with reflective materials.",
+      "Equal Yes and No controls with restrained color.",
+      "Host-matched paper and violet for the embedded question panel."
+    ],
+    "rules": [],
+    "dos": [
+      "Do keep the live artifact visually dominant.",
+      "Do preserve clean planar facets and equal response controls.",
+      "Do retain keyboard, focus, status, and reduced-motion behavior.",
+      "Do keep the embedded artifact transparent and its panel aligned with the host."
+    ],
+    "donts": [
+      "Don't introduce a new brand or decorative dashboard furniture.",
+      "Don't restore video playback or a scrubber as the primary interaction.",
+      "Don't apply the widget panel palette, radius, or typography to the standalone player."
+    ]
+  }
+}

@@ -87,3 +87,6 @@ button, input, summary, pre[tabindex] { outline-offset: 3px; }
   .explainer-time { margin: 0 2px; font-size: 11px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0s !important; scroll-behavior: auto !important; } }
+
+/* The explainer leads the lesson, then the written explanation. */
+#lesson-text > .explainer:first-child { margin-top: 0; border-top: 0; padding-top: 0; margin-bottom: 22px; }
